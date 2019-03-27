@@ -13,6 +13,8 @@ import ij.plugin.filter.Analyzer;
 import ij.plugin.frame.RoiManager;
 import ij.process.ImageProcessor;
 import ij.process.ImageStatistics;
+import loci.formats.FormatException;
+import loci.plugins.BF;
 import loci.plugins.in.ImporterOptions;
 import net.imagej.Dataset;
 import net.imagej.ImageJ;
@@ -87,18 +89,17 @@ public class EsferoideJ_ implements Command {
 	private static void keepBiggestROI(RoiManager rm) {
 
 		Roi[] rois = rm.getRoisAsArray();
-		
+
 		if (rois.length > 1) {
 			rm.runCommand("Select All");
 			rm.runCommand("Delete");
 
 			Roi biggestROI = rois[0];
-			
+
 			for (int i = 1; i < rois.length; i++) {
-				
 
 				if (getArea(biggestROI.getPolygon()) < getArea(rois[i].getPolygon())) {
-					
+
 					biggestROI = rois[i];
 				}
 
@@ -109,10 +110,11 @@ public class EsferoideJ_ implements Command {
 
 	}
 
-	private void detectEsferoide(String dir, String name) {
-		System.out.println(name);
-		IJ.openImage(name);
-		ImagePlus imp = IJ.getImage();
+	private void detectEsferoide(ImporterOptions options, String dir, String name) throws FormatException, IOException {
+		options.setId(name);
+		
+		ImagePlus[] imps = BF.openImagePlus(options);
+		ImagePlus imp = imps[0];
 		ImagePlus imp2 = imp.duplicate();
 
 		/// We consider two cases, when there is a "black hole" in the image (the first
@@ -192,21 +194,24 @@ public class EsferoideJ_ implements Command {
 			ImporterOptions options = new ImporterOptions();
 			options.setWindowless(true);
 
+			DirectoryChooser dc = new DirectoryChooser("Select the folder containing the nd2 images");
+			String dir = dc.getDirectory();
+
+			File folder = new File(dir);
+			List<String> result = new ArrayList<String>();
+
+			search(".*\\.nd2", folder, result);
+
+			for (String name : result) {
+				detectEsferoide(options, dir, name);
+			}
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-
-		DirectoryChooser dc = new DirectoryChooser("Select the folder containing the nd2 images");
-		String dir = dc.getDirectory();
-
-		File folder = new File(dir);
-		List<String> result = new ArrayList<String>();
-
-		search(".*\\.nd2", folder, result);
-
-		for (String name : result) {
-			detectEsferoide(dir, name);
+		} catch (FormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 	}
