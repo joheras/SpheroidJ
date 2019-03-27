@@ -57,6 +57,7 @@ public class EsferoideJ_ implements Command {
 	private static void showResultsAndSave(String dir, ImagePlus imp1, RoiManager rm) {
 		IJ.run(imp1, "RGB Color", "");
 		if (rm != null) {
+			rm.setVisible(false);
 			keepBiggestROI(rm);
 			rm.runCommand("Show None");
 			rm.runCommand("Show All");
@@ -146,11 +147,13 @@ public class EsferoideJ_ implements Command {
 		imp3.close();
 
 		RoiManager rm = RoiManager.getInstance();
+		
 		// We have to check whether the program has detected something (that is, whether
 		// the
 		// RoiManager is not null).
 
 		if (rm != null) {
+			
 			showResultsAndSave(dir, imp, rm);
 		} else {
 			// We try to find it using a threshold directly.
@@ -165,6 +168,7 @@ public class EsferoideJ_ implements Command {
 			imp3.close();
 
 			rm = RoiManager.getInstance();
+			
 			showResultsAndSave(dir, imp, rm);
 		}
 		imp.close();
@@ -205,6 +209,7 @@ public class EsferoideJ_ implements Command {
 			for (String name : result) {
 				detectEsferoide(options, dir, name);
 			}
+			IJ.showMessage("Process finished");
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
