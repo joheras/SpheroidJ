@@ -40,6 +40,8 @@ public class EsferoideJ_ implements Command {
 //	@Parameter
 //	private ImagePlus imp;
 
+	
+	// Method to count the number of pixels whose value is below a threshold. 
 	private int countBelowThreshold(ImagePlus imp1, int threshold) {
 
 		ImageProcessor ip = imp1.getProcessor();
@@ -54,6 +56,9 @@ public class EsferoideJ_ implements Command {
 
 	}
 
+	// Method to draw the results stored in the roi manager into the image, and then save the
+	// image in a given directory. Since we know that there is only one esferoide per image, we
+	// only keep the ROI with the biggest area stored in the ROI Manager. 
 	private static void showResultsAndSave(String dir, ImagePlus imp1, RoiManager rm) {
 		IJ.run(imp1, "RGB Color", "");
 		if (rm != null) {
@@ -73,6 +78,7 @@ public class EsferoideJ_ implements Command {
 
 	}
 
+	// Method to obtain the area from a polygon. Probably, there is a most direct method to do this. 
 	private static final double getArea(Polygon p) {
 		if (p == null)
 			return Double.NaN;
@@ -87,6 +93,9 @@ public class EsferoideJ_ implements Command {
 		return (Math.abs(carea / 2.0));
 	}
 
+	
+	// Method to keep the ROI with the biggest area stored in the ROIManager, the rest of ROIs are
+	// deleted. 
 	private static void keepBiggestROI(RoiManager rm) {
 
 		Roi[] rois = rm.getRoisAsArray();
@@ -111,6 +120,9 @@ public class EsferoideJ_ implements Command {
 
 	}
 
+	
+	
+	// Method to detect esferoides. 
 	private void detectEsferoide(ImporterOptions options, String dir, String name) throws FormatException, IOException {
 		options.setId(name);
 		
@@ -119,8 +131,8 @@ public class EsferoideJ_ implements Command {
 		ImagePlus imp2 = imp.duplicate();
 
 		/// We consider two cases, when there is a "black hole" in the image (the first
-		/// case),
-		// there is a lot of pixels below a given threshold.
+		/// case), there is a lot of pixels below a given threshold, and those pixels belong to the
+		// Esferoide. 
 		int count = countBelowThreshold(imp2, 1800);
 		if (count > 10000) {
 
@@ -149,14 +161,13 @@ public class EsferoideJ_ implements Command {
 		RoiManager rm = RoiManager.getInstance();
 		
 		// We have to check whether the program has detected something (that is, whether
-		// the
-		// RoiManager is not null).
+		// the RoiManager is not null). If the ROIManager is empty, we try a different approach using
+		// a threshold. 
 
 		if (rm != null) {
-			
 			showResultsAndSave(dir, imp, rm);
 		} else {
-			// We try to find it using a threshold directly.
+			// We try to find the esferoide using a threshold directly.
 			imp2 = imp.duplicate();
 			IJ.setThreshold(imp2, 0, 4500);
 			IJ.run(imp2, "Convert to Mask", "");
@@ -175,6 +186,8 @@ public class EsferoideJ_ implements Command {
 
 	}
 
+	// Method to search the list of files that satisfies a pattern in a folder. The list of files
+	// is stored in the result list. 
 	private static void search(final String pattern, final File folder, List<String> result) {
 		for (final File f : folder.listFiles()) {
 
@@ -195,20 +208,28 @@ public class EsferoideJ_ implements Command {
 	public void run() {
 		IJ.setForegroundColor(255, 0, 0);
 		try {
+			
+			// Since we are working with nd2 images that are imported with the Bio-formats
+			// plugins, we must set to true the option windowless to avoid that the program
+			// shows us a confirmation dialog every time. 
 			ImporterOptions options = new ImporterOptions();
 			options.setWindowless(true);
-
+			
+			// We ask the user for a directory with nd2 images. 
 			DirectoryChooser dc = new DirectoryChooser("Select the folder containing the nd2 images");
 			String dir = dc.getDirectory();
 
+			// We store the list of nd2 files in the result list. 
 			File folder = new File(dir);
 			List<String> result = new ArrayList<String>();
-
 			search(".*\\.nd2", folder, result);
 
+			// For each nd2 file, we detect the esferoide. Currently, this means that it creates
+			// a new image with the detected region marked in red.
 			for (String name : result) {
 				detectEsferoide(options, dir, name);
 			}
+			// When the process is finished, we show a message to inform the user. 
 			IJ.showMessage("Process finished");
 
 		} catch (IOException e) {
