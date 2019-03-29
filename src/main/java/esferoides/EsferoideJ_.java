@@ -143,7 +143,7 @@ public class EsferoideJ_ implements Command {
 	}
 	
 	private void processEsferoidUsingThreshold(ImagePlus imp2) {
-		IJ.setThreshold(imp2, 0, 4500);
+		IJ.setAutoThreshold(imp2, "Otsu");
 		IJ.run(imp2, "Convert to Mask", "");
 		IJ.run(imp2, "Dilate", "");
 		IJ.run(imp2, "Fill Holes", "");
