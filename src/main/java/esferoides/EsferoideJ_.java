@@ -136,9 +136,9 @@ public class EsferoideJ_ implements Command {
 		int count = countBelowThreshold(imp2, 1800);
 		if (count > 10000) {
 
-			IJ.setThreshold(imp2, 0, 1500);
+			IJ.setThreshold(imp2, 0, 2600);
 			IJ.run(imp2, "Convert to Mask", "");
-			IJ.run(imp2, "Dilate", "");
+			IJ.run(imp2, "Erode", "");
 
 		} else {
 
