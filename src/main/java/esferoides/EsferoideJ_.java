@@ -27,6 +27,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,6 +42,9 @@ public class EsferoideJ_ implements Command {
 
 //	@Parameter
 //	private ImagePlus imp;
+	
+	
+	private static ArrayList<Integer> goodRows = new ArrayList<>(); 
 
 	// Method to count the number of pixels whose value is below a threshold.
 	private int countBelowThreshold(ImagePlus imp1, int threshold) {
@@ -112,7 +117,8 @@ public class EsferoideJ_ implements Command {
 //                rt = new ResultsTable();
 //            }
 			int nrows = Analyzer.getResultsTable().getCounter();
-			System.out.println(nrows);
+			goodRows.add(nrows-1);
+			
 			rt.setPrecision(2);
 			rt.setLabel(name, nrows - 1);
 			rt.addValue("Area", area);
@@ -128,8 +134,10 @@ public class EsferoideJ_ implements Command {
 			rt.addValue("Min. Feret", vFeret[2]);
 			rt.addValue("X Feret", vFeret[3]);
 			rt.addValue("Y Feret", vFeret[4]);
+			
 
 		}
+		
 		IJ.saveAs(imp1, "Tiff", dir + name + "_pred.tiff");
 	}
 
@@ -308,8 +316,9 @@ public class EsferoideJ_ implements Command {
 			// We store the list of nd2 files in the result list.
 			File folder = new File(dir);
 			List<String> result = new ArrayList<String>();
+			
 			search(".*\\.nd2", folder, result);
-
+			Collections.sort(result);
 			// We initialize the ResultsTable
 			ResultsTable rt = new ResultsTable();
 //			rt.show("Results");
@@ -321,6 +330,25 @@ public class EsferoideJ_ implements Command {
 				detectEsferoide(options, dir, name);
 			}
 			rt = ResultsTable.getResultsTable();
+			/// Remove empty rows
+			int rows = rt.getCounter();
+			for(int i=rows;i>0;i--) {
+				if(!(goodRows.contains(i-1))) {
+					rt.deleteRow(i-1);
+				}
+			}
+			/// Remove unnecessary columns
+			rt.deleteColumn("Mean");
+			rt.deleteColumn("Min");
+			rt.deleteColumn("Max");
+			rt.deleteColumn("Circ.");
+			rt.deleteColumn("Median");
+			rt.deleteColumn("Skew");
+			rt.deleteColumn("Kurt");
+			rt.deleteColumn("AR");
+			rt.deleteColumn("Round");
+			rt.deleteColumn("Solidity");
+			
 			rt.saveAs(dir + "results.csv");
 			// When the process is finished, we show a message to inform the user.
 			IJ.showMessage("Process finished");
