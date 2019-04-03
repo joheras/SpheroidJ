@@ -228,6 +228,9 @@ public class EsferoideJ_ implements Command {
 		imp3.close();
 
 		RoiManager rm = RoiManager.getInstance();
+		if(rm!=null) {
+			rm.setVisible(false);
+		}
 		return rm;
 	}
 
@@ -254,6 +257,7 @@ public class EsferoideJ_ implements Command {
 		// the RoiManager is not null). If the ROIManager is empty, we try a different
 		// approach using a threshold.
 		if (rm == null) {
+			
 			// We try to find the esferoide using a threshold directly.
 			imp2 = imp.duplicate();
 			processEsferoidUsingThreshold(imp2);
@@ -264,10 +268,12 @@ public class EsferoideJ_ implements Command {
 		// the RoiManager is not null). If the ROIManager is empty, we try a different
 		// approach using a threshold combined with watershed.
 		if (rm == null) {
+			
 			// We try to find the esferoide using a threshold directly.
 			imp2 = imp.duplicate();
 			processEsferoidUsingThresholdWithWatershed(imp2);
 			rm = analyzeParticles(imp2);
+			
 		}
 
 		// Idea: Probar varias alternativas y ver cuál es la que produce mejor
