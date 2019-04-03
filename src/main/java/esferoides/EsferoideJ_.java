@@ -7,6 +7,7 @@ import ij.Prefs;
 import ij.gui.Roi;
 import ij.io.DirectoryChooser;
 import ij.io.FileInfo;
+import ij.measure.Calibration;
 import ij.measure.ResultsTable;
 import ij.plugin.Thresholder;
 import ij.plugin.filter.Analyzer;
@@ -60,23 +61,76 @@ public class EsferoideJ_ implements Command {
 	// image in a given directory. Since we know that there is only one esferoide
 	// per image, we
 	// only keep the ROI with the biggest area stored in the ROI Manager.
-	private static void showResultsAndSave(String dir, ImagePlus imp1, RoiManager rm) {
+	// Method to draw the results stored in the roi manager into the image, and then
+	// save the
+	// image in a given directory. Since we know that there is only one esferoide
+	// per image, we
+	// only keep the ROI with the biggest area stored in the ROI Manager.
+	private static void showResultsAndSave(String dir, ImagePlus imp1, RoiManager rm) throws IOException {
 		IJ.run(imp1, "RGB Color", "");
+
+		String name = imp1.getTitle();
+		// FileInfo f = imp1.getFileInfo();
+		name = name.substring(0, name.indexOf("."));
+
+		ImageStatistics stats = null;
+		double[] vFeret;// = 0;
+		double perimeter = 0;
 		if (rm != null) {
 			rm.setVisible(false);
 			keepBiggestROI(rm);
 			rm.runCommand("Show None");
 			rm.runCommand("Show All");
-
 			rm.runCommand(imp1, "Draw");
-			// imp.close();
-			rm.close();
-		}
-		String name = imp1.getTitle();
-		FileInfo f = imp1.getFileInfo();
-		name = name.substring(0, name.indexOf("."));
-		IJ.saveAs(imp1, "Tiff", dir + name + "_pred.tiff");
+			rm.runCommand("Save", dir + name + ".zip");// saving the roi
 
+			Roi[] roi = rm.getRoisAsArray();
+			rm.close();
+			// compute the statistics (without calibrate)
+			stats = roi[0].getStatistics();
+			vFeret = roi[0].getFeretValues();// .getFeretsDiameter();
+			perimeter = roi[0].getLength();
+			Calibration cal = imp1.getCalibration();
+			double pw, ph;
+			if (cal != null) {
+				pw = cal.pixelWidth;
+				ph = cal.pixelHeight;
+			} else {
+				pw = 1.0;
+				ph = 1.0;
+			}
+			// calibrate the measures
+			double area = stats.area * pw * ph;
+			double w = imp1.getWidth() * pw;
+			double h = imp1.getHeight() * ph;
+			double aFraction = area / (w * h) * 100;
+			double perim = perimeter * pw;
+
+			ResultsTable rt = ResultsTable.getResultsTable();
+//            if (rt == null) {
+//
+//                rt = new ResultsTable();
+//            }
+			int nrows = Analyzer.getResultsTable().getCounter();
+			System.out.println(nrows);
+			rt.setPrecision(2);
+			rt.setLabel(name, nrows - 1);
+			rt.addValue("Area", area);
+			rt.addValue("Area Fraction", aFraction);
+			rt.addValue("Perimeter", perim);
+			double circularity = perimeter == 0.0 ? 0.0 : 4.0 * Math.PI * (area / (perim * perim));
+			if (circularity > 1.0) {
+				circularity = 1.0;
+			}
+			rt.addValue("Circularity", circularity);
+			rt.addValue("Diam. Feret", vFeret[0]);
+			rt.addValue("Angle. Feret", vFeret[1]);
+			rt.addValue("Min. Feret", vFeret[2]);
+			rt.addValue("X Feret", vFeret[3]);
+			rt.addValue("Y Feret", vFeret[4]);
+
+		}
+		IJ.saveAs(imp1, "Tiff", dir + name + "_pred.tiff");
 	}
 
 	// Method to obtain the area from a polygon. Probably, there is a most direct
@@ -141,16 +195,26 @@ public class EsferoideJ_ implements Command {
 		IJ.run(imp2, "Dilate", "");
 		IJ.run(imp2, "Fill Holes", "");
 	}
-	
+
 	private void processEsferoidUsingThreshold(ImagePlus imp2) {
 		IJ.setAutoThreshold(imp2, "Otsu");
 		IJ.run(imp2, "Convert to Mask", "");
 		IJ.run(imp2, "Dilate", "");
+		IJ.run(imp2, "Dilate", "");
 		IJ.run(imp2, "Fill Holes", "");
 	}
 
+	private void processEsferoidUsingThresholdWithWatershed(ImagePlus imp2) {
+		IJ.setAutoThreshold(imp2, "Otsu");
+		IJ.run(imp2, "Convert to Mask", "");
+		IJ.run(imp2, "Dilate", "");
+		IJ.run(imp2, "Dilate", "");
+		IJ.run(imp2, "Fill Holes", "");
+		IJ.run(imp2, "Watershed", "");
+	}
+
 	private RoiManager analyzeParticles(ImagePlus imp2) {
-		IJ.run(imp2, "Analyze Particles...", "size=10000-Infinity circularity=0.10-1.00 show=Outlines exclude add");
+		IJ.run(imp2, "Analyze Particles...", "size=10000-Infinity circularity=0.15-1.00 show=Outlines exclude add");
 		ImagePlus imp3 = IJ.getImage();
 		imp2.close();
 		imp3.close();
@@ -158,7 +222,7 @@ public class EsferoideJ_ implements Command {
 		RoiManager rm = RoiManager.getInstance();
 		return rm;
 	}
-	
+
 	// Method to detect esferoides.
 	private void detectEsferoide(ImporterOptions options, String dir, String name) throws FormatException, IOException {
 		options.setId(name);
@@ -176,7 +240,7 @@ public class EsferoideJ_ implements Command {
 		} else {
 			processEsferoidesGeneralCase(imp2);
 		}
-		
+
 		RoiManager rm = analyzeParticles(imp2);
 		// We have to check whether the program has detected something (that is, whether
 		// the RoiManager is not null). If the ROIManager is empty, we try a different
@@ -187,7 +251,21 @@ public class EsferoideJ_ implements Command {
 			processEsferoidUsingThreshold(imp2);
 			rm = analyzeParticles(imp2);
 		}
-		
+
+		// We have to check whether the program has detected something (that is, whether
+		// the RoiManager is not null). If the ROIManager is empty, we try a different
+		// approach using a threshold combined with watershed.
+		if (rm == null) {
+			// We try to find the esferoide using a threshold directly.
+			imp2 = imp.duplicate();
+			processEsferoidUsingThresholdWithWatershed(imp2);
+			rm = analyzeParticles(imp2);
+		}
+
+		// Idea: Probar varias alternativas y ver cuál es la que produce mejor
+		// resultado.
+		// ¿Cómo se define mejor resultado?
+
 		showResultsAndSave(dir, imp, rm);
 		imp.close();
 
@@ -232,12 +310,18 @@ public class EsferoideJ_ implements Command {
 			List<String> result = new ArrayList<String>();
 			search(".*\\.nd2", folder, result);
 
+			// We initialize the ResultsTable
+			ResultsTable rt = new ResultsTable();
+//			rt.show("Results");
+
 			// For each nd2 file, we detect the esferoide. Currently, this means that it
 			// creates
 			// a new image with the detected region marked in red.
 			for (String name : result) {
 				detectEsferoide(options, dir, name);
 			}
+			rt = ResultsTable.getResultsTable();
+			rt.saveAs(dir + "results.csv");
 			// When the process is finished, we show a message to inform the user.
 			IJ.showMessage("Process finished");
 
