@@ -44,7 +44,7 @@ public class EsferoideJ_ implements Command {
 //	private ImagePlus imp;
 	
 	
-	private static ArrayList<Integer> goodRows = new ArrayList<>(); 
+	private static ArrayList<Integer> goodRows; 
 
 	// Method to count the number of pixels whose value is below a threshold.
 	private int countBelowThreshold(ImagePlus imp1, int threshold) {
@@ -164,7 +164,7 @@ public class EsferoideJ_ implements Command {
 
 		Roi[] rois = rm.getRoisAsArray();
 
-		if (rois.length > 1) {
+		if (rois.length >=1) {
 			rm.runCommand("Select All");
 			rm.runCommand("Delete");
 
@@ -178,6 +178,7 @@ public class EsferoideJ_ implements Command {
 				}
 
 			}
+//			IJ.showMessage(""+getArea(biggestROI.getPolygon()));
 			rm.addRoi(biggestROI);
 
 		}
@@ -220,9 +221,23 @@ public class EsferoideJ_ implements Command {
 		IJ.run(imp2, "Fill Holes", "");
 		IJ.run(imp2, "Watershed", "");
 	}
+	
+	private void processEsferoidUsingFindEdges(ImagePlus imp2) {
+		IJ.run(imp2, "Find Edges", "");
+		IJ.run(imp2, "Convert to Mask", "");
+		IJ.run(imp2, "Morphological Filters", "operation=[Black Top Hat] element=Square radius=5");
+		imp2.close();
+		ImagePlus imp3 = IJ.getImage();
+//		imp3.close();
+//		imp3= IJ.getImage();
+		IJ.run(imp3, "Dilate", "");
+		IJ.run(imp3, "Dilate", "");
+		IJ.run(imp3, "Fill Holes", "");
+
+	}
 
 	private RoiManager analyzeParticles(ImagePlus imp2) {
-		IJ.run(imp2, "Analyze Particles...", "size=10000-Infinity circularity=0.15-1.00 show=Outlines exclude add");
+		IJ.run(imp2, "Analyze Particles...", "size=20000-Infinity circularity=0.15-1.00 show=Outlines exclude add");
 		ImagePlus imp3 = IJ.getImage();
 		imp2.close();
 		imp3.close();
@@ -245,14 +260,16 @@ public class EsferoideJ_ implements Command {
 		/// We consider two cases, when there is a "black hole" in the image (the first
 		/// case), there is a lot of pixels below a given threshold, and those pixels
 		/// belong to the Esferoide.
-		int count = countBelowThreshold(imp2, 1800);
-		if (count > 10000) {
+		int count = countBelowThreshold(imp2, 1100);
+		if (count > 100) {
 			processBlackHoles(imp2);
+			
 		} else {
 			processEsferoidesGeneralCase(imp2);
 		}
 
 		RoiManager rm = analyzeParticles(imp2);
+		
 		// We have to check whether the program has detected something (that is, whether
 		// the RoiManager is not null). If the ROIManager is empty, we try a different
 		// approach using a threshold.
@@ -272,6 +289,15 @@ public class EsferoideJ_ implements Command {
 			// We try to find the esferoide using a threshold directly.
 			imp2 = imp.duplicate();
 			processEsferoidUsingThresholdWithWatershed(imp2);
+			rm = analyzeParticles(imp2);
+			
+		}
+		
+		if (rm==null) {
+			imp2 = imp.duplicate();
+			processEsferoidUsingFindEdges(imp2);
+			imp2 = IJ.getImage();
+			imp2.changes=false;
 			rm = analyzeParticles(imp2);
 			
 		}
@@ -303,10 +329,94 @@ public class EsferoideJ_ implements Command {
 
 		}
 	}
+	
+//	
+//	private static int getOtsuThreshold(ImagePlus imp1) {
+//		ImagePlus imp = imp1.duplicate();
+//		IJ.setAutoThreshold(imp, "Otsu");
+//		ImageProcessor ip = imp.getProcessor();
+//		int thresh = (int) ip.getMaxThreshold();
+//		imp.close();
+//		return thresh;
+//				
+//	}
+//	
+//	private static double getPercentageUnderOtsu(ImagePlus imp,int thresh) {
+//		ImageProcessor ip = imp.getProcessor();
+//		int[] histogram = ip.getHistogram();
+//		int countpixelsbelow = 0;
+//		for (int i = 0; i < thresh; i++) {
+//			countpixelsbelow = countpixelsbelow + histogram[i];
+//		}
+//
+//		int countpixelsover = 0;
+//		for (int i = thresh; i < histogram.length; i++) {
+//			countpixelsover = countpixelsover + histogram[i];
+//		}
+//
+//		if(countpixelsbelow>countpixelsover) {
+//			return countpixelsover * 1.0 / (countpixelsbelow+countpixelsover);
+//		}else {
+//			return countpixelsbelow * 1.0 / (countpixelsbelow+countpixelsover);
+//		}
+//	}
+//	
+//	
+//	
+//
+//	
+//	
+//	private void newDetectEsferoide(ImporterOptions options, String dir, String name) throws FormatException, IOException {
+//		options.setId(name);
+//
+//		ImagePlus[] imps = BF.openImagePlus(options);
+//		ImagePlus imp = imps[0];
+//		ImagePlus imp2 = imp.duplicate();
+//
+//		/// We consider two cases, when there is a "black hole" in the image (the first
+//		/// case), there is a lot of pixels below a given threshold, and those pixels
+//		/// belong to the Esferoide.
+//		RoiManager rm;
+//		int count = countBelowThreshold(imp2, 1800);
+//		if (count > 10000) {
+//			processBlackHoles(imp2);
+//			rm  = analyzeParticles(imp2);
+//		}else {
+//			int thresh = getOtsuThreshold(imp2);
+//			double perc = getPercentageUnderOtsu(imp2, thresh);
+//			
+//			// If the threshold is not over 7000 and the division using Otsu produces 
+//			// two good regions, then the threshold method is employed. Otherwise, we 
+//			// apply the filter
+//			
+//			if(thresh<7000 && perc>=0.1 && perc <=0.4) {
+//				processEsferoidUsingThreshold(imp2);
+//				rm = analyzeParticles(imp2);
+//				if(rm==null) {
+//					imp2 = imp.duplicate();
+//					processEsferoidUsingThresholdWithWatershed(imp2);
+//					rm = analyzeParticles(imp2);					
+//				}
+//			}else {
+//				processEsferoidesGeneralCase(imp2);
+//				rm = analyzeParticles(imp2);
+//				if(rm==null) {
+//					imp2 = imp.duplicate();
+//					processEsferoidUsingFindEdges(imp2);
+//					rm = analyzeParticles(imp2);					
+//				}
+//			}
+//		}
+//
+//		showResultsAndSave(dir, imp, rm);
+//		imp.close();
+//
+//	}
 
 	@Override
 	public void run() {
 		IJ.setForegroundColor(255, 0, 0);
+		goodRows  = new ArrayList<>();
 		try {
 
 			// Since we are working with nd2 images that are imported with the Bio-formats
@@ -358,6 +468,7 @@ public class EsferoideJ_ implements Command {
 			rt.saveAs(dir + "results.csv");
 			// When the process is finished, we show a message to inform the user.
 			IJ.showMessage("Process finished");
+			rt.reset();
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

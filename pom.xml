@@ -29,6 +29,11 @@
 			<name>OME Artifactory</name>
 			<url>https://artifacts.openmicroscopy.org/artifactory/maven/</url>
 		</repository>
+		<repository>
+			<id>imagej</id>
+			<name>ImageJ</name>
+			<url>http://maven.imagej.net/content/repositories/public/</url>
+		</repository>
 	</repositories>
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
@@ -53,6 +58,12 @@
 			<artifactId>IJ-OpenCV</artifactId>
 			<version>1.2.1-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+			<groupId>com.github.ijpb</groupId>
+			<artifactId>MorphoLibJ</artifactId>
+			<version>v1.4.0</version>
+		</dependency>
+
 		<dependency>
 			<groupId>ome</groupId>
 			<artifactId>formats-api</artifactId>
