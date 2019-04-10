@@ -22,6 +22,8 @@ import net.imagej.ImageJ;
 import net.imagej.axis.Axes;
 import net.imagej.axis.AxisType;
 
+import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Polygon;
 import java.io.File;
 import java.io.IOException;
@@ -32,12 +34,17 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.swing.BorderFactory;
+import javax.swing.JFrame;
+import javax.swing.JProgressBar;
+import javax.swing.border.Border;
+
 import org.scijava.command.Command;
 import org.scijava.command.Previewable;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 
-@Plugin(type = Command.class, headless = true, menuPath = "Plugins>EsferoideJ")
+@Plugin(type = Command.class, headless = true, menuPath = "Plugins>Esferoids>EsferoideJ")
 public class EsferoideJ_ implements Command {
 
 //	@Parameter
@@ -188,8 +195,8 @@ public class EsferoideJ_ implements Command {
 	private void processBlackHoles(ImagePlus imp2) {
 		IJ.setThreshold(imp2, 0, 2300);
 		IJ.run(imp2, "Convert to Mask", "");
-		IJ.run(imp2, "Fill Holes", "");
-		IJ.run(imp2, "Dilate", "");
+//		IJ.run(imp2, "Fill Holes", "");
+//		IJ.run(imp2, "Dilate", "");
 		IJ.run(imp2, "Watershed", "");
 	}
 
@@ -262,6 +269,7 @@ public class EsferoideJ_ implements Command {
 		/// belong to the Esferoide.
 		int count = countBelowThreshold(imp2, 1100);
 		if (count > 100) {
+			
 			processBlackHoles(imp2);
 			
 		} else {
@@ -429,6 +437,22 @@ public class EsferoideJ_ implements Command {
 			DirectoryChooser dc = new DirectoryChooser("Select the folder containing the nd2 images");
 			String dir = dc.getDirectory();
 
+			
+			JFrame frame = new JFrame("Work in progress");
+			JProgressBar progressBar = new JProgressBar();
+			progressBar.setValue(0);
+			progressBar.setString("");
+			progressBar.setStringPainted(true);
+			progressBar.setIndeterminate(true);
+			Border border = BorderFactory.createTitledBorder("Processing...");
+			progressBar.setBorder(border);
+			Container content = frame.getContentPane();
+			content.add(progressBar, BorderLayout.NORTH);
+			frame.setSize(300, 100);
+			frame.setVisible(true);
+			
+			
+			
 			// We store the list of nd2 files in the result list.
 			File folder = new File(dir);
 			List<String> result = new ArrayList<String>();
@@ -467,8 +491,16 @@ public class EsferoideJ_ implements Command {
 			
 			rt.saveAs(dir + "results.csv");
 			// When the process is finished, we show a message to inform the user.
-			IJ.showMessage("Process finished");
+			
+			ExportToExcel ete = new ExportToExcel(rt, dir);
+			ete.convertToExcel();
+			
+			
 			rt.reset();
+			
+			frame.setVisible(false);
+			frame.dispose();
+			IJ.showMessage("Process finished");
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
