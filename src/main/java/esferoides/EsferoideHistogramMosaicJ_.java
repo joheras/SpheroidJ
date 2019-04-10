@@ -28,7 +28,7 @@ import loci.plugins.BF;
 import loci.plugins.in.ImporterOptions;
 import net.imagej.ImageJ;
 
-@Plugin(type = Command.class, headless = true, menuPath = "Plugins>Esferoids>EsferoideHistogramMosaicJ")
+//@Plugin(type = Command.class, headless = true, menuPath = "Plugins>Esferoids>EsferoideHistogramMosaicJ")
 public class EsferoideHistogramMosaicJ_ implements Command {
 
 
@@ -223,25 +223,6 @@ public class EsferoideHistogramMosaicJ_ implements Command {
 
 	}
 
-	// Method to search the list of files that satisfies a pattern in a folder. The
-	// list of files
-	// is stored in the result list.
-	private static void search(final String pattern, final File folder, List<String> result) {
-		for (final File f : folder.listFiles()) {
-
-			if (f.isDirectory()) {
-				search(pattern, f, result);
-			}
-
-			if (f.isFile()) {
-				if (f.getName().matches(pattern)) {
-					result.add(f.getAbsolutePath());
-				}
-			}
-
-		}
-	}
-
 	@Override
 	public void run() {
 
@@ -259,7 +240,7 @@ public class EsferoideHistogramMosaicJ_ implements Command {
 			File folder = new File(dir);
 			List<String> result = new ArrayList<String>();
 
-			search(".*\\.nd2", folder, result);
+			Utils.search(".*\\.nd2", folder, result);
 			Collections.sort(result);
 //		rt.show("Results");
 

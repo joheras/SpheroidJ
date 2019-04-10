@@ -44,14 +44,14 @@ import org.scijava.command.Previewable;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 
-@Plugin(type = Command.class, headless = true, menuPath = "Plugins>Esferoids>EsferoideJ")
+//@Plugin(type = Command.class, headless = true, menuPath = "Plugins>Esferoids>EsferoideJ")
+@Plugin(type = Command.class, headless = true, menuPath = "Plugins>EsferoideJ")
 public class EsferoideJ_ implements Command {
 
 //	@Parameter
 //	private ImagePlus imp;
-	
-	
-	private static ArrayList<Integer> goodRows; 
+
+	private static ArrayList<Integer> goodRows;
 
 	// Method to count the number of pixels whose value is below a threshold.
 	private int countBelowThreshold(ImagePlus imp1, int threshold) {
@@ -124,8 +124,8 @@ public class EsferoideJ_ implements Command {
 //                rt = new ResultsTable();
 //            }
 			int nrows = Analyzer.getResultsTable().getCounter();
-			goodRows.add(nrows-1);
-			
+			goodRows.add(nrows - 1);
+
 			rt.setPrecision(2);
 			rt.setLabel(name, nrows - 1);
 			rt.addValue("Area", area);
@@ -141,10 +141,9 @@ public class EsferoideJ_ implements Command {
 			rt.addValue("Min. Feret", vFeret[2]);
 			rt.addValue("X Feret", vFeret[3]);
 			rt.addValue("Y Feret", vFeret[4]);
-			
 
 		}
-		
+
 		IJ.saveAs(imp1, "Tiff", dir + name + "_pred.tiff");
 	}
 
@@ -171,7 +170,7 @@ public class EsferoideJ_ implements Command {
 
 		Roi[] rois = rm.getRoisAsArray();
 
-		if (rois.length >=1) {
+		if (rois.length >= 1) {
 			rm.runCommand("Select All");
 			rm.runCommand("Delete");
 
@@ -192,11 +191,13 @@ public class EsferoideJ_ implements Command {
 
 	}
 
-	private void processBlackHoles(ImagePlus imp2) {
+	private void processBlackHoles(ImagePlus imp2, boolean dilate) {
 		IJ.setThreshold(imp2, 0, 2300);
 		IJ.run(imp2, "Convert to Mask", "");
-//		IJ.run(imp2, "Fill Holes", "");
-//		IJ.run(imp2, "Dilate", "");
+		if (dilate) {
+			IJ.run(imp2, "Fill Holes", "");
+			IJ.run(imp2, "Dilate", "");
+		}
 		IJ.run(imp2, "Watershed", "");
 	}
 
@@ -228,7 +229,7 @@ public class EsferoideJ_ implements Command {
 		IJ.run(imp2, "Fill Holes", "");
 		IJ.run(imp2, "Watershed", "");
 	}
-	
+
 	private void processEsferoidUsingFindEdges(ImagePlus imp2) {
 		IJ.run(imp2, "Find Edges", "");
 		IJ.run(imp2, "Convert to Mask", "");
@@ -250,7 +251,7 @@ public class EsferoideJ_ implements Command {
 		imp3.close();
 
 		RoiManager rm = RoiManager.getInstance();
-		if(rm!=null) {
+		if (rm != null) {
 			rm.setVisible(false);
 		}
 		return rm;
@@ -269,20 +270,23 @@ public class EsferoideJ_ implements Command {
 		/// belong to the Esferoide.
 		int count = countBelowThreshold(imp2, 1100);
 		if (count > 100) {
-			
-			processBlackHoles(imp2);
-			
+			if (count > 10000) {
+				processBlackHoles(imp2,false);
+			} else {
+				processBlackHoles(imp2,true);
+			}
+
 		} else {
 			processEsferoidesGeneralCase(imp2);
 		}
 
 		RoiManager rm = analyzeParticles(imp2);
-		
+
 		// We have to check whether the program has detected something (that is, whether
 		// the RoiManager is not null). If the ROIManager is empty, we try a different
 		// approach using a threshold.
 		if (rm == null) {
-			
+
 			// We try to find the esferoide using a threshold directly.
 			imp2 = imp.duplicate();
 			processEsferoidUsingThreshold(imp2);
@@ -293,21 +297,21 @@ public class EsferoideJ_ implements Command {
 		// the RoiManager is not null). If the ROIManager is empty, we try a different
 		// approach using a threshold combined with watershed.
 		if (rm == null) {
-			
+
 			// We try to find the esferoide using a threshold directly.
 			imp2 = imp.duplicate();
 			processEsferoidUsingThresholdWithWatershed(imp2);
 			rm = analyzeParticles(imp2);
-			
+
 		}
-		
-		if (rm==null) {
+
+		if (rm == null) {
 			imp2 = imp.duplicate();
 			processEsferoidUsingFindEdges(imp2);
 			imp2 = IJ.getImage();
-			imp2.changes=false;
+			imp2.changes = false;
 			rm = analyzeParticles(imp2);
-			
+
 		}
 
 		// Idea: Probar varias alternativas y ver cuál es la que produce mejor
@@ -319,25 +323,6 @@ public class EsferoideJ_ implements Command {
 
 	}
 
-	// Method to search the list of files that satisfies a pattern in a folder. The
-	// list of files
-	// is stored in the result list.
-	private static void search(final String pattern, final File folder, List<String> result) {
-		for (final File f : folder.listFiles()) {
-
-			if (f.isDirectory()) {
-				search(pattern, f, result);
-			}
-
-			if (f.isFile()) {
-				if (f.getName().matches(pattern)) {
-					result.add(f.getAbsolutePath());
-				}
-			}
-
-		}
-	}
-	
 //	
 //	private static int getOtsuThreshold(ImagePlus imp1) {
 //		ImagePlus imp = imp1.duplicate();
@@ -424,7 +409,7 @@ public class EsferoideJ_ implements Command {
 	@Override
 	public void run() {
 		IJ.setForegroundColor(255, 0, 0);
-		goodRows  = new ArrayList<>();
+		goodRows = new ArrayList<>();
 		try {
 
 			// Since we are working with nd2 images that are imported with the Bio-formats
@@ -437,7 +422,6 @@ public class EsferoideJ_ implements Command {
 			DirectoryChooser dc = new DirectoryChooser("Select the folder containing the nd2 images");
 			String dir = dc.getDirectory();
 
-			
 			JFrame frame = new JFrame("Work in progress");
 			JProgressBar progressBar = new JProgressBar();
 			progressBar.setValue(0);
@@ -450,14 +434,12 @@ public class EsferoideJ_ implements Command {
 			content.add(progressBar, BorderLayout.NORTH);
 			frame.setSize(300, 100);
 			frame.setVisible(true);
-			
-			
-			
+
 			// We store the list of nd2 files in the result list.
 			File folder = new File(dir);
 			List<String> result = new ArrayList<String>();
-			
-			search(".*\\.nd2", folder, result);
+
+			Utils.search(".*\\.nd2", folder, result);
 			Collections.sort(result);
 			// We initialize the ResultsTable
 			ResultsTable rt = new ResultsTable();
@@ -472,9 +454,9 @@ public class EsferoideJ_ implements Command {
 			rt = ResultsTable.getResultsTable();
 			/// Remove empty rows
 			int rows = rt.getCounter();
-			for(int i=rows;i>0;i--) {
-				if(!(goodRows.contains(i-1))) {
-					rt.deleteRow(i-1);
+			for (int i = rows; i > 0; i--) {
+				if (!(goodRows.contains(i - 1))) {
+					rt.deleteRow(i - 1);
 				}
 			}
 			/// Remove unnecessary columns
@@ -488,16 +470,15 @@ public class EsferoideJ_ implements Command {
 			rt.deleteColumn("AR");
 			rt.deleteColumn("Round");
 			rt.deleteColumn("Solidity");
-			
+
 			rt.saveAs(dir + "results.csv");
 			// When the process is finished, we show a message to inform the user.
-			
+
 			ExportToExcel ete = new ExportToExcel(rt, dir);
 			ete.convertToExcel();
-			
-			
+
 			rt.reset();
-			
+
 			frame.setVisible(false);
 			frame.dispose();
 			IJ.showMessage("Process finished");
