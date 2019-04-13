@@ -28,7 +28,7 @@ import loci.plugins.BF;
 import loci.plugins.in.ImporterOptions;
 import net.imagej.ImageJ;
 
-//@Plugin(type = Command.class, headless = true, menuPath = "Plugins>Esferoids>EsferoideHistogramMosaicJ")
+@Plugin(type = Command.class, headless = true, menuPath = "Plugins>Esferoids>EsferoideHistogramMosaicJ")
 public class EsferoideHistogramMosaicJ_ implements Command {
 
 

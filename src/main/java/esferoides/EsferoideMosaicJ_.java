@@ -17,7 +17,7 @@ import ij.plugin.frame.RoiManager;
 import ij.process.AutoThresholder;
 import ij.process.ImageProcessor;
 
-//@Plugin(type = Command.class, headless = true, menuPath = "Plugins>Esferoids>EsferoideMosaicJ")
+@Plugin(type = Command.class, headless = true, menuPath = "Plugins>Esferoids>EsferoideMosaicJ")
 public class EsferoideMosaicJ_ implements Command {
 
 	@Parameter
