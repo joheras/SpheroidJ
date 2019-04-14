@@ -21,7 +21,7 @@ import loci.formats.FormatException;
 import loci.plugins.BF;
 import loci.plugins.in.ImporterOptions;
 
-@Plugin(type = Command.class, headless = true, menuPath = "Plugins>Esferoids>Extract Histograms")
+//@Plugin(type = Command.class, headless = true, menuPath = "Plugins>Esferoids>Extract Histograms")
 public class ExtractHistogramsJ_ implements Command {
 
 	@Parameter

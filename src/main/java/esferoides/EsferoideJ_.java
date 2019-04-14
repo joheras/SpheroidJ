@@ -45,8 +45,8 @@ import org.scijava.command.Previewable;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 
-@Plugin(type = Command.class, headless = true, menuPath = "Plugins>Esferoids>EsferoideJ")
-//@Plugin(type = Command.class, headless = true, menuPath = "Plugins>EsferoideJ")
+//@Plugin(type = Command.class, headless = true, menuPath = "Plugins>Esferoids>EsferoideJ")
+@Plugin(type = Command.class, headless = true, menuPath = "Plugins>EsferoideJ")
 public class EsferoideJ_ implements Command {
 
 //	@Parameter
