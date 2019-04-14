@@ -9,6 +9,7 @@ import ij.io.DirectoryChooser;
 import ij.io.FileInfo;
 import ij.measure.Calibration;
 import ij.measure.ResultsTable;
+import ij.plugin.ImageCalculator;
 import ij.plugin.Thresholder;
 import ij.plugin.filter.Analyzer;
 import ij.plugin.frame.RoiManager;
@@ -220,6 +221,49 @@ public class EsferoideJ_ implements Command {
 		IJ.run(imp2, "Dilate", "");
 		IJ.run(imp2, "Fill Holes", "");
 	}
+	
+	private ImagePlus processEsferoidUsingThresholdCombination(ImagePlus imp2) {
+		
+		ImagePlus imp1 = imp2.duplicate();
+//		IJ.run(imp1, "Convolve...",
+//				"text1=[-1 -1 -1 -1 -1 -1 -1\n-1 -1 -1 -1 -1 -1 -1\n-1 -1 -1 -1 -1 -1 -1\n-1 -1 -1 50 -1 -1 -1\n-1 -1 -1 -1 -1 -1 -1\n-1 -1 -1 -1 -1 -1 -1\n-1 -1 -1 -1 -1 -1 -1\n] normalize");
+//		IJ.run(imp1, "Maximum...", "radius=2");
+//		Prefs.blackBackground = false;
+//		IJ.run(imp1, "Convert to Mask", "");
+//		IJ.run(imp1, "Dilate", "");
+//		IJ.run(imp1, "Dilate", "");
+//		IJ.run(imp1, "Dilate", "");
+//		IJ.run(imp1, "Fill Holes", "");
+		IJ.run(imp1, "Find Edges", "");
+		IJ.run(imp1, "Convert to Mask", "");
+		IJ.run(imp1, "Morphological Filters", "operation=[Black Top Hat] element=Square radius=5");
+		imp1.changes=false;
+		imp1.close();
+		ImagePlus imp4 = IJ.getImage();
+//		imp3.close();
+//		imp3= IJ.getImage();
+		IJ.run(imp4, "Dilate", "");
+		IJ.run(imp4, "Dilate", "");
+		IJ.run(imp4, "Fill Holes", "");
+		
+		
+		IJ.setAutoThreshold(imp2, "Otsu");
+		IJ.run(imp2, "Convert to Mask", "");
+		IJ.run(imp2, "Dilate", "");
+		IJ.run(imp2, "Dilate", "");
+		IJ.run(imp2, "Fill Holes", "");
+		
+		ImageCalculator ic = new ImageCalculator();
+		ImagePlus imp3 = ic.run("OR create", imp4, imp2);
+		imp4.changes=false;
+		imp4.close();
+		imp2.close();
+		return imp3;
+		
+	}
+	
+	
+	
 
 	private void processEsferoidUsingThresholdWithWatershed(ImagePlus imp2) {
 		IJ.setAutoThreshold(imp2, "Otsu");
@@ -309,12 +353,15 @@ public class EsferoideJ_ implements Command {
 
 				int smallParticles = analyzeSmallParticles(imp2);
 				if (smallParticles > 20) {
+					rm.runCommand("Select All");
+					rm.runCommand("Delete");
 					imp2 = imp.duplicate();
 					processEsferoidUsingFindEdges(imp2);
 					imp2 = IJ.getImage();
 					imp2.changes = false;
+					
 					rm = analyzeParticles(imp2,false);
-
+					
 				} else {
 					rm.addRoi(r);
 				}
@@ -324,18 +371,18 @@ public class EsferoideJ_ implements Command {
 			// We have to check whether the program has detected something (that is, whether
 			// the RoiManager is not null). If the ROIManager is empty, we try a different
 			// approach using a threshold.
-			if (rm == null) {
+			if (rm == null || rm.getRoisAsArray().length==0) {
 
 				// We try to find the esferoide using a threshold directly.
 				imp2 = imp.duplicate();
-				processEsferoidUsingThreshold(imp2);
+				imp2=processEsferoidUsingThresholdCombination(imp2);
 				rm = analyzeParticles(imp2,false);
 			}
 
 			// We have to check whether the program has detected something (that is, whether
 			// the RoiManager is not null). If the ROIManager is empty, we try a different
 			// approach using a threshold combined with watershed.
-			if (rm == null) {
+			if (rm == null|| rm.getRoisAsArray().length==0) {
 
 				// We try to find the esferoide using a threshold directly.
 				imp2 = imp.duplicate();
@@ -344,7 +391,7 @@ public class EsferoideJ_ implements Command {
 
 			}
 
-			if (rm == null) {
+			if (rm == null|| rm.getRoisAsArray().length==0) {
 				imp2 = imp.duplicate();
 				processEsferoidUsingFindEdges(imp2);
 				imp2 = IJ.getImage();
