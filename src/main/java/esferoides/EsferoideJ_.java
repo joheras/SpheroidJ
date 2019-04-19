@@ -45,6 +45,8 @@ import org.scijava.command.Previewable;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 
+
+
 //@Plugin(type = Command.class, headless = true, menuPath = "Plugins>Esferoids>EsferoideJ")
 @Plugin(type = Command.class, headless = true, menuPath = "Plugins>EsferoideJ")
 public class EsferoideJ_ implements Command {
@@ -94,6 +96,23 @@ public class EsferoideJ_ implements Command {
 			keepBiggestROI(rm);
 			rm.runCommand("Show None");
 			rm.runCommand("Show All");
+			
+			
+			ImagePlus impN = IJ.createImage("Untitled", "16-bit white", imp1.getWidth(),imp1.getHeight(), 1);
+			rm.select(0);
+			rm.runCommand(impN,"Fill");
+			rm.runCommand("Delete");
+			IJ.setAutoThreshold(impN, "Default");
+			IJ.run(impN, "Convert to Mask", "");
+			IJ.run(impN, "Shape Smoothing", "relative_proportion_fds=5 absolute_number_fds=2 keep=[Relative_proportion of FDs]");
+			IJ.run(impN, "Analyze Particles...", "exclude add");
+			impN.close();
+			rm = RoiManager.getInstance();
+			rm.runCommand("Show None");
+			rm.runCommand("Show All");
+			
+			
+			
 			rm.runCommand(imp1, "Draw");
 			rm.runCommand("Save", dir + name + ".zip");// saving the roi
 
@@ -200,6 +219,8 @@ public class EsferoideJ_ implements Command {
 			IJ.run(imp2, "Dilate", "");
 		}
 		IJ.run(imp2, "Watershed", "");
+//		IJ.run(imp2, "Shape Smoothing", "relative_proportion_fds=5 absolute_number_fds=2 keep=[Relative_proportion of FDs]");
+
 	}
 
 	private void processEsferoidesGeneralCase(ImagePlus imp2) {
@@ -212,6 +233,8 @@ public class EsferoideJ_ implements Command {
 		IJ.run(imp2, "Dilate", "");
 		IJ.run(imp2, "Dilate", "");
 		IJ.run(imp2, "Fill Holes", "");
+//		IJ.run(imp2, "Shape Smoothing", "relative_proportion_fds=5 absolute_number_fds=2 keep=[Relative_proportion of FDs]");
+
 	}
 
 	private void processEsferoidUsingThreshold(ImagePlus imp2) {
@@ -220,6 +243,8 @@ public class EsferoideJ_ implements Command {
 		IJ.run(imp2, "Dilate", "");
 		IJ.run(imp2, "Dilate", "");
 		IJ.run(imp2, "Fill Holes", "");
+//		IJ.run(imp2, "Shape Smoothing", "relative_proportion_fds=5 absolute_number_fds=2 keep=[Relative_proportion of FDs]");
+
 	}
 	
 	private ImagePlus processEsferoidUsingThresholdCombination(ImagePlus imp2) {
@@ -255,6 +280,8 @@ public class EsferoideJ_ implements Command {
 		
 		ImageCalculator ic = new ImageCalculator();
 		ImagePlus imp3 = ic.run("OR create", imp4, imp2);
+//		IJ.run(imp3, "Shape Smoothing", "relative_proportion_fds=5 absolute_number_fds=2 keep=[Relative_proportion of FDs]");
+
 		imp4.changes=false;
 		imp4.close();
 		imp2.close();
@@ -272,6 +299,8 @@ public class EsferoideJ_ implements Command {
 		IJ.run(imp2, "Dilate", "");
 		IJ.run(imp2, "Fill Holes", "");
 		IJ.run(imp2, "Watershed", "");
+//		IJ.run(imp2, "Shape Smoothing", "relative_proportion_fds=5 absolute_number_fds=2 keep=[Relative_proportion of FDs]");
+
 	}
 
 	private void processEsferoidUsingFindEdges(ImagePlus imp2) {
@@ -285,6 +314,7 @@ public class EsferoideJ_ implements Command {
 		IJ.run(imp3, "Dilate", "");
 		IJ.run(imp3, "Dilate", "");
 		IJ.run(imp3, "Fill Holes", "");
+//		IJ.run(imp3, "Shape Smoothing", "relative_proportion_fds=5 absolute_number_fds=2 keep=[Relative_proportion of FDs]");
 
 	}
 
@@ -553,9 +583,9 @@ public class EsferoideJ_ implements Command {
 			rt.deleteColumn("Median");
 			rt.deleteColumn("Skew");
 			rt.deleteColumn("Kurt");
-			rt.deleteColumn("AR");
-			rt.deleteColumn("Round");
-			rt.deleteColumn("Solidity");
+//			rt.deleteColumn("AR");
+//			rt.deleteColumn("Round");
+//			rt.deleteColumn("Solidity");
 
 //			rt.saveAs(dir + "results.csv");
 			// When the process is finished, we show a message to inform the user.
@@ -579,13 +609,13 @@ public class EsferoideJ_ implements Command {
 
 	}
 
-	public static void main(final String... args) throws Exception {
-		// Launch ImageJ as usual.
-		final ImageJ ij = new ImageJ();
-		ij.launch(args);
-
-		// Launch the "CommandWithPreview" command.
-		ij.command().run(EsferoideJ_.class, true);
-	}
+//	public static void main(final String... args) throws Exception {
+//		// Launch ImageJ as usual.
+//		final ImageJ ij = new ImageJ();
+//		ij.launch(args);
+//
+//		// Launch the "CommandWithPreview" command.
+//		ij.command().run(EsferoideJ_.class, true);
+//	}
 
 }
