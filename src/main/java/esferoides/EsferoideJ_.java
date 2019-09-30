@@ -52,6 +52,9 @@ public class EsferoideJ_ implements Command {
 //	@Parameter
 //	private ImagePlus imp;
 
+//	@Parameter
+//	private static boolean smooth = false;
+
 	private static ArrayList<Integer> goodRows;
 
 	// Method to count the number of pixels whose value is below a threshold.
@@ -66,6 +69,42 @@ public class EsferoideJ_ implements Command {
 		}
 
 		return countpixels;
+
+	}
+	
+	
+	private boolean countBetweenThresholdOver(ImagePlus imp1, int threshold1,int threshold2, int num) {
+
+		ImageProcessor ip = imp1.getProcessor();
+		int[] histogram = ip.getHistogram(256);
+		ImageStatistics is = ip.getStatistics();
+		double min = is.min;
+//		System.out.println(min);
+		double max = is.max;
+//		System.out.println(max);
+		double range = (max-min)/256;
+		
+		
+		
+		
+		int i = 0;
+		double pos = min;
+		while(pos<threshold1) {
+			pos = pos + range;
+			i++;
+			
+		}
+		
+		while(pos<threshold2) {
+			if(histogram[i]<num) {
+				return true;
+			}
+			i++;
+			pos = pos + range;
+			System.out.println(pos);
+		}
+		
+		return false;
 
 	}
 
@@ -94,72 +133,77 @@ public class EsferoideJ_ implements Command {
 			keepBiggestROI(rm);
 			rm.runCommand("Show None");
 			rm.runCommand("Show All");
+			boolean smooth=false;
+			if (smooth) {
+				ImagePlus impN = IJ.createImage("Untitled", "16-bit white", imp1.getWidth(), imp1.getHeight(), 1);
+				rm.select(0);
+				rm.runCommand(impN, "Fill");
+				rm.runCommand("Delete");
+				IJ.setAutoThreshold(impN, "Default");
+				IJ.run(impN, "Convert to Mask", "");
+				IJ.run(impN, "Shape Smoothing",
+						"relative_proportion_fds=5 absolute_number_fds=2 keep=[Relative_proportion of FDs]");
+				IJ.run(impN, "Analyze Particles...", "exclude add");
+				impN.close();
+				rm = RoiManager.getInstance();
+				rm.runCommand("Show None");
+				rm.runCommand("Show All");
+			}
 
-			ImagePlus impN = IJ.createImage("Untitled", "16-bit white", imp1.getWidth(), imp1.getHeight(), 1);
-			rm.select(0);
-			rm.runCommand(impN, "Fill");
-			rm.runCommand("Delete");
-			IJ.setAutoThreshold(impN, "Default");
-			IJ.run(impN, "Convert to Mask", "");
-			IJ.run(impN, "Shape Smoothing",
-					"relative_proportion_fds=5 absolute_number_fds=2 keep=[Relative_proportion of FDs]");
-			IJ.run(impN, "Analyze Particles...", "exclude add");
-			impN.close();
-			rm = RoiManager.getInstance();
-			rm.runCommand("Show None");
-			rm.runCommand("Show All");
-
-			rm.runCommand(imp1, "Draw");
-			rm.runCommand("Save", dir + name + ".zip");// saving the roi
-
-			Roi[] roi = rm.getRoisAsArray();
-			rm.close();
-			// compute the statistics (without calibrate)
-			stats = roi[0].getStatistics();
 			
 
-			vFeret = roi[0].getFeretValues();// .getFeretsDiameter();
-			perimeter = roi[0].getLength();
-			Calibration cal = imp1.getCalibration();
-			double pw, ph;
-			if (cal != null) {
-				pw = cal.pixelWidth;
-				ph = cal.pixelHeight;
-			} else {
-				pw = 1.0;
-				ph = 1.0;
-			}
-			// calibrate the measures
-			double area = stats.area * pw * ph;
-			double w = imp1.getWidth() * pw;
-			double h = imp1.getHeight() * ph;
-			double aFraction = area / (w * h) * 100;
-			double perim = perimeter * pw;
+			Roi[] roi = rm.getRoisAsArray();
+			
+			if (roi.length != 0) {
+				rm.runCommand(imp1, "Draw");
+				rm.runCommand("Save", dir + name + ".zip");
+				rm.close();
+				// saving the roi
+				// compute the statistics (without calibrate)
+				stats = roi[0].getStatistics();
 
-			ResultsTable rt = ResultsTable.getResultsTable();
+				vFeret = roi[0].getFeretValues();// .getFeretsDiameter();
+				perimeter = roi[0].getLength();
+				Calibration cal = imp1.getCalibration();
+				double pw, ph;
+				if (cal != null) {
+					pw = cal.pixelWidth;
+					ph = cal.pixelHeight;
+				} else {
+					pw = 1.0;
+					ph = 1.0;
+				}
+				// calibrate the measures
+				double area = stats.area * pw * ph;
+				double w = imp1.getWidth() * pw;
+				double h = imp1.getHeight() * ph;
+				double aFraction = area / (w * h) * 100;
+				double perim = perimeter * pw;
+
+				ResultsTable rt = ResultsTable.getResultsTable();
 //            if (rt == null) {
 //
 //                rt = new ResultsTable();
 //            }
-			int nrows = Analyzer.getResultsTable().getCounter();
-			goodRows.add(nrows - 1);
+				int nrows = Analyzer.getResultsTable().getCounter();
+				goodRows.add(nrows - 1);
 
-			rt.setPrecision(2);
-			rt.setLabel(name, nrows - 1);
-			rt.addValue("Area", area);
-			rt.addValue("Area Fraction", aFraction);
-			rt.addValue("Perimeter", perim);
-			double circularity = perimeter == 0.0 ? 0.0 : 4.0 * Math.PI * (area / (perim * perim));
-			if (circularity > 1.0) {
-				circularity = 1.0;
+				rt.setPrecision(2);
+				rt.setLabel(name, nrows - 1);
+				rt.addValue("Area", area);
+				rt.addValue("Area Fraction", aFraction);
+				rt.addValue("Perimeter", perim);
+				double circularity = perimeter == 0.0 ? 0.0 : 4.0 * Math.PI * (area / (perim * perim));
+				if (circularity > 1.0) {
+					circularity = 1.0;
+				}
+				rt.addValue("Circularity", circularity);
+				rt.addValue("Diam. Feret", vFeret[0]);
+				rt.addValue("Angle. Feret", vFeret[1]);
+				rt.addValue("Min. Feret", vFeret[2]);
+				rt.addValue("X Feret", vFeret[3]);
+				rt.addValue("Y Feret", vFeret[4]);
 			}
-			rt.addValue("Circularity", circularity);
-			rt.addValue("Diam. Feret", vFeret[0]);
-			rt.addValue("Angle. Feret", vFeret[1]);
-			rt.addValue("Min. Feret", vFeret[2]);
-			rt.addValue("X Feret", vFeret[3]);
-			rt.addValue("Y Feret", vFeret[4]);
-
 		}
 
 		IJ.saveAs(imp1, "Tiff", dir + name + "_pred.tiff");
@@ -235,6 +279,9 @@ public class EsferoideJ_ implements Command {
 		IJ.run(imp2, "Dilate", "");
 		IJ.run(imp2, "Dilate", "");
 		IJ.run(imp2, "Fill Holes", "");
+		IJ.run(imp2, "Erode", "");
+		IJ.run(imp2, "Erode", "");
+		IJ.run(imp2, "Erode", "");
 //		IJ.run(imp2, "Shape Smoothing", "relative_proportion_fds=5 absolute_number_fds=2 keep=[Relative_proportion of FDs]");
 
 	}
@@ -245,6 +292,8 @@ public class EsferoideJ_ implements Command {
 		IJ.run(imp2, "Dilate", "");
 		IJ.run(imp2, "Dilate", "");
 		IJ.run(imp2, "Fill Holes", "");
+		IJ.run(imp2, "Erode", "");
+		IJ.run(imp2, "Erode", "");
 //		IJ.run(imp2, "Shape Smoothing", "relative_proportion_fds=5 absolute_number_fds=2 keep=[Relative_proportion of FDs]");
 
 	}
@@ -272,13 +321,15 @@ public class EsferoideJ_ implements Command {
 		IJ.run(imp4, "Dilate", "");
 		IJ.run(imp4, "Dilate", "");
 		IJ.run(imp4, "Fill Holes", "");
-
+		IJ.run(imp4, "Erode", "");
+		IJ.run(imp4, "Erode", "");
 		IJ.setAutoThreshold(imp2, "Otsu");
 		IJ.run(imp2, "Convert to Mask", "");
 		IJ.run(imp2, "Dilate", "");
 		IJ.run(imp2, "Dilate", "");
 		IJ.run(imp2, "Fill Holes", "");
-
+		IJ.run(imp2, "Erode", "");
+		IJ.run(imp2, "Erode", "");
 		ImageCalculator ic = new ImageCalculator();
 		ImagePlus imp3 = ic.run("OR create", imp4, imp2);
 //		IJ.run(imp3, "Shape Smoothing", "relative_proportion_fds=5 absolute_number_fds=2 keep=[Relative_proportion of FDs]");
@@ -296,6 +347,8 @@ public class EsferoideJ_ implements Command {
 		IJ.run(imp2, "Dilate", "");
 		IJ.run(imp2, "Dilate", "");
 		IJ.run(imp2, "Fill Holes", "");
+		IJ.run(imp2, "Erode", "");
+		IJ.run(imp2, "Erode", "");
 		IJ.run(imp2, "Watershed", "");
 //		IJ.run(imp2, "Shape Smoothing", "relative_proportion_fds=5 absolute_number_fds=2 keep=[Relative_proportion of FDs]");
 
@@ -312,6 +365,8 @@ public class EsferoideJ_ implements Command {
 		IJ.run(imp3, "Dilate", "");
 		IJ.run(imp3, "Dilate", "");
 		IJ.run(imp3, "Fill Holes", "");
+		IJ.run(imp3, "Erode", "");
+		IJ.run(imp3, "Erode", "");
 //		IJ.run(imp3, "Shape Smoothing", "relative_proportion_fds=5 absolute_number_fds=2 keep=[Relative_proportion of FDs]");
 
 	}
@@ -328,7 +383,7 @@ public class EsferoideJ_ implements Command {
 		imp3.close();
 
 		RoiManager rm = RoiManager.getInstance();
-		if (rm != null ) {
+		if (rm != null) {
 			rm.setVisible(false);
 //			Roi[] rois = rm.getRoisAsArray();
 //			rm.runCommand("Select All");
@@ -342,8 +397,7 @@ public class EsferoideJ_ implements Command {
 //				}
 //				
 //			}
-			
-			
+
 		}
 		return rm;
 	}
@@ -371,10 +425,13 @@ public class EsferoideJ_ implements Command {
 
 		/// We consider two cases, when there is a "black hole" in the image (the first
 		/// case), there is a lot of pixels below a given threshold, and those pixels
-		/// belong to the Esferoide.
+		/// belong to the Esferoide. In addition to be a black hole, there must be a 
+		/// difference between that region and the rest of the image.
 		int count = countBelowThreshold(imp2, 1100);
+		boolean realBlackHole = countBetweenThresholdOver(imp2,1100,2000,1500);
+//		System.out.println(realBlackHole);
 		RoiManager rm;
-		if (count > 100) {
+		if (count > 100 && realBlackHole) {
 			if (count > 10000) {
 				processBlackHoles(imp2, false);
 			} else {
@@ -388,7 +445,7 @@ public class EsferoideJ_ implements Command {
 
 			rm = analyzeParticles(imp2, false);
 
-			if (rm != null  ) {
+			if (rm != null) {
 
 				Roi[] r = rm.getRoisAsArray();
 				rm.runCommand("Select All");
