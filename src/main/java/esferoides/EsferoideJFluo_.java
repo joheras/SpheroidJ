@@ -1,19 +1,5 @@
 package esferoides;
 
-import ij.IJ;
-
-import ij.ImagePlus;
-import ij.gui.Roi;
-import ij.io.DirectoryChooser;
-import ij.measure.Calibration;
-import ij.measure.ResultsTable;
-import ij.plugin.filter.Analyzer;
-import ij.plugin.frame.RoiManager;
-import ij.process.ImageStatistics;
-import loci.formats.FormatException;
-import loci.plugins.BF;
-import loci.plugins.in.ImporterOptions;
-
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Polygon;
@@ -31,15 +17,21 @@ import javax.swing.border.Border;
 import org.scijava.command.Command;
 import org.scijava.plugin.Plugin;
 
-//@Plugin(type = Command.class, headless = true, menuPath = "Plugins>Esferoids>EsferoideJ")
-@Plugin(type = Command.class, headless = true, menuPath = "Plugins>EsferoideJv2")
-public class EsferoideJv2_ implements Command {
+import ij.IJ;
+import ij.ImagePlus;
+import ij.gui.Roi;
+import ij.io.DirectoryChooser;
+import ij.measure.Calibration;
+import ij.measure.ResultsTable;
+import ij.plugin.ImageCalculator;
+import ij.plugin.filter.Analyzer;
+import ij.plugin.frame.RoiManager;
+import ij.process.ImageStatistics;
+import loci.formats.FormatException;
+import loci.plugins.in.ImporterOptions;
 
-//	@Parameter
-//	private ImagePlus imp;
-
-//	@Parameter
-//	private static boolean smooth = false;
+@Plugin(type = Command.class, headless = true, menuPath = "Plugins>EsferoideJFluo")
+public class EsferoideJFluo_ implements Command {
 
 	private static ArrayList<Integer> goodRows;
 
@@ -57,6 +49,7 @@ public class EsferoideJv2_ implements Command {
 		IJ.run(imp1, "RGB Color", "");
 
 		String name = imp1.getTitle();
+		
 		// FileInfo f = imp1.getFileInfo();
 		name = name.substring(0, name.indexOf("."));
 
@@ -68,40 +61,20 @@ public class EsferoideJv2_ implements Command {
 			keepBiggestROI(rm);
 			rm.runCommand("Show None");
 			rm.runCommand("Show All");
-			boolean smooth = false;
-			if (smooth) {
-				ImagePlus impN = IJ.createImage("Untitled", "16-bit white", imp1.getWidth(), imp1.getHeight(), 1);
-				rm.select(0);
-				rm.runCommand(impN, "Fill");
-				rm.runCommand("Delete");
-				IJ.setAutoThreshold(impN, "Default");
-				IJ.run(impN, "Convert to Mask", "");
-				IJ.run(impN, "Shape Smoothing",
-						"relative_proportion_fds=5 absolute_number_fds=2 keep=[Relative_proportion of FDs]");
-				IJ.run(impN, "Analyze Particles...", "exclude add");
-				impN.close();
-				rm = RoiManager.getInstance();
-				rm.runCommand("Show None");
-				rm.runCommand("Show All");
-			}
 			
-			
-			
-
-
 			Roi[] roi = rm.getRoisAsArray();
 
 			if (roi.length != 0) {
-				
+
 				imp1.show();
 				rm.select(0);
 				IJ.run(imp1, "Fit Spline", "");
 				rm.addRoi(imp1.getRoi());
 				rm.select(0);
-				rm.runCommand(imp1,"Delete");
-				
+				rm.runCommand(imp1, "Delete");
+
 				roi = rm.getRoisAsArray();
-				
+
 				rm.runCommand(imp1, "Draw");
 				rm.runCommand("Save", dir + name + ".zip");
 				rm.close();
@@ -128,10 +101,10 @@ public class EsferoideJv2_ implements Command {
 				double perim = perimeter * pw;
 
 				ResultsTable rt = ResultsTable.getResultsTable();
-//            if (rt == null) {
-//
-//                rt = new ResultsTable();
-//            }
+//	            if (rt == null) {
+				//
+//	                rt = new ResultsTable();
+//	            }
 				int nrows = Analyzer.getResultsTable().getCounter();
 				goodRows.add(nrows - 1);
 
@@ -193,7 +166,7 @@ public class EsferoideJv2_ implements Command {
 				}
 
 			}
-//			IJ.showMessage(""+getArea(biggestROI.getPolygon()));
+//				IJ.showMessage(""+getArea(biggestROI.getPolygon()));
 			rm.addRoi(biggestROI);
 
 		}
@@ -201,8 +174,8 @@ public class EsferoideJv2_ implements Command {
 	}
 
 	private RoiManager analyzeParticles(ImagePlus imp2, boolean blackHole) {
-		IJ.run(imp2, "Analyze Particles...", "size=0.01-Infinity circularity=0.15-2.00 show=Outlines exclude add");
-		imp2.changes=false;
+		IJ.run(imp2, "Analyze Particles...", "size=0.01-Infinity circularity=0.0-2.00 show=Outlines exclude add");
+		imp2.changes = false;
 		ImagePlus imp3 = IJ.getImage();
 		imp2.close();
 		imp3.close();
@@ -214,173 +187,54 @@ public class EsferoideJv2_ implements Command {
 		return rm;
 	}
 
-	private void processEsferoidUsingThreshold(ImagePlus imp2,boolean dilate) {
-		
-		IJ.setAutoThreshold(imp2, "Default");
-		IJ.run(imp2, "Convert to Mask", "");
-		if(dilate) {IJ.run(imp2, "Dilate", "");}
-		IJ.run(imp2, "Fill Holes", "");
-		if(dilate) {IJ.run(imp2, "Erode", "");}
-//		IJ.run(imp2, "Watershed", "");
-		int w = imp2.getWidth();
-		int h  = imp2.getHeight();
-		imp2.setRoi(10,10,w-10,h-10);
-		String title = imp2.getTitle();
-		imp2 = imp2.duplicate();
-		imp2.setTitle(title);
-		IJ.run(imp2, "Canvas Size...", "width="+w+" height="+h +" position=Center");
-		IJ.run(imp2, "Watershed", "");
-
-	}
-	
-private void processEsferoidUsingThresholdOld(ImagePlus imp2) {
-		
-		IJ.setAutoThreshold(imp2, "Otsu");
-		IJ.run(imp2, "Convert to Mask", "");
-		IJ.run(imp2, "Dilate", "");
-		IJ.run(imp2, "Dilate", "");
-		IJ.run(imp2, "Fill Holes", "");
-		IJ.run(imp2, "Erode", "");
-		IJ.run(imp2, "Erode", "");
-//		IJ.run(imp2, "Watershed", "");
-		int w = imp2.getWidth();
-		int h  = imp2.getHeight();
-		imp2.setRoi(10,10,w-10,h-10);
-		imp2 = imp2.duplicate();
-		IJ.run(imp2, "Canvas Size...", "width="+w+" height="+h +" position=Center");
-
-	}
-	
-	private void processEsferoidUsingVariance(ImagePlus imp2) {
-		
+	private void processEsferoidNoFluo(ImagePlus imp2) {
+		IJ.run(imp2, "8-bit", "");
 		IJ.run(imp2, "Find Edges", "");
-		IJ.run(imp2, "Variance...", "radius=7");
-		IJ.setAutoThreshold(imp2, "Otsu dark");
-		IJ.run(imp2, "Convert to Mask", "");
-		IJ.run(imp2, "Dilate", "");
-		IJ.run(imp2, "Fill Holes", "");
-		IJ.run(imp2, "Erode", "");
-//		IJ.run(imp2, "Watershed", "");
-		int w = imp2.getWidth();
-		int h  = imp2.getHeight();
-		imp2.setRoi(10,10,w-10,h-10);
-		imp2 = imp2.duplicate();
-		IJ.run(imp2, "Canvas Size...", "width="+w+" height="+h +" position=Center");
-
-	}
-	
-	
-
-	private void processEsferoidesGeneralCaseHector(ImagePlus imp2, int maxFilter, double stdI) {
-		
-		
-		IJ.run(imp2, "Find Edges", "");
-
-		IJ.run(imp2, "Maximum...", "radius=" + maxFilter);
-		ImagePlus imp4 = imp2.duplicate();
-
-
-		ImageStatistics stats = imp2.getAllStatistics();
-		double mean = stats.mean;
-		double std = stats.stdDev;
-		System.out.println(Math.floor(mean + stdI * std));
 		IJ.setAutoThreshold(imp2, "Default dark");
-		IJ.setRawThreshold(imp2, Math.floor(mean + stdI * std), 255, null);
+		IJ.setRawThreshold(imp2, 30, 255, null);
 		IJ.run(imp2, "Convert to Mask", "");
+	}
 
-
-		if (maxFilter < 7) {
-			IJ.run(imp2, "Dilate", "");
-			IJ.run(imp2, "Dilate", "");
-			IJ.run(imp2, "Fill Holes", "");
-		}
-		IJ.run(imp2, "Erode", "");
-		IJ.run(imp2, "Erode", "");
-//		IJ.run(imp2, "Watershed", "");
-		int w = imp2.getWidth();
-		int h  = imp2.getHeight();
-		imp2.setRoi(50,50,w-50,h-50);
-		String title = imp2.getTitle();
-		imp2 = imp2.duplicate();
-		imp2.setTitle(title);
-		IJ.run(imp2, "Canvas Size...", "width="+w+" height="+h +" position=Center");
-
-
-//		IJ.run(imp3, "Shape Smoothing", "relative_proportion_fds=5 absolute_number_fds=2 keep=[Relative_proportion of FDs]");
-
+	private void processEsferoidFluo(ImagePlus imp2) {
+		IJ.run(imp2, "8-bit", "");
+		IJ.setAutoThreshold(imp2, "Otsu dark");
+		IJ.setRawThreshold(imp2, 40, 255, null);
+		IJ.run(imp2, "Convert to Mask", "");
 	}
 
 	// Method to detect esferoides.
-	private void detectEsferoide(ImporterOptions options, String dir, String name) throws FormatException, IOException {
-		ImagePlus impb = IJ.openImage(name);
-		String title = impb.getTitle();
+	private void detectEsferoideFluo(ImporterOptions options, String dir, String name)
+			throws FormatException, IOException {
 		
-		ImagePlus imp = impb.duplicate();
+		ImagePlus impFluo = IJ.openImage(name);
+
+		name=name.replace("fluo", "");
+		ImagePlus impNoFluo = IJ.openImage(name);
+
+		String title = impNoFluo.getTitle();
+
+		ImagePlus imp = impNoFluo.duplicate();
 		imp.setTitle(title);
-		IJ.run(imp, "8-bit", "");
-		ImagePlus imp2 = imp.duplicate();
-		imp2.setTitle(title);
-		RoiManager rm = null;
-//
-		processEsferoidUsingThreshold(imp2,true);
-		rm = analyzeParticles(imp2, false);
-		if (rm == null || rm.getRoisAsArray().length == 0) {
-			processEsferoidUsingThreshold(imp2,false);
-			rm = analyzeParticles(imp2, false);
-		}
-	
 
-		/*if (rm == null || rm.getRoisAsArray().length == 0) {
-			double v = 1.75;
-			
-			while ((rm == null || rm.getRoisAsArray().length == 0) && v >= 1.0) {
-				imp2 = imp.duplicate();
-				processEsferoidesGeneralCaseHector(imp2, 3, v);
-				rm = analyzeParticles(imp2, false);
-				v = v - 0.25;
-			}
-		}
-
-		if (rm == null || rm.getRoisAsArray().length == 0) {
-			double v = 1.75;
-			while ((rm == null || rm.getRoisAsArray().length == 0) && v >= 1.0) {
-				imp2 = imp.duplicate();
-				processEsferoidesGeneralCaseHector(imp2, 5, v);
-				rm = analyzeParticles(imp2, false);
-				v = v - 0.25;
-			}
-		}
-
-		if (rm == null || rm.getRoisAsArray().length == 0) {
-			double v = 1.75;
-			while ((rm == null || rm.getRoisAsArray().length == 0) && v >= 1.0) {
-				imp2 = imp.duplicate();
-				processEsferoidesGeneralCaseHector(imp2, 7, v);
-				rm = analyzeParticles(imp2, false);
-				v = v - 0.25;
-			}
-		}
+		processEsferoidFluo(impFluo);
+		processEsferoidNoFluo(impNoFluo);
+		ImageCalculator ic = new ImageCalculator();
+		ImagePlus imp3 = ic.run("Add create", impFluo, impNoFluo);
+		IJ.run(imp3, "Fill Holes", "");
+		RoiManager rm = analyzeParticles(imp3, false);
 		
-		if (rm == null || rm.getRoisAsArray().length == 0) {
-			imp2 = imp.duplicate();
-			processEsferoidUsingThreshold(imp2);
-			rm = analyzeParticles(imp2, false);
-
-		}
-		
-		*/
-		
-		
-		
-		
-
+		imp3.close();
+		impFluo.close();
+		impNoFluo.close();
 		showResultsAndSave(dir, imp, rm);
 		imp.close();
-
+		
+		
 	}
 
 	@Override
 	public void run() {
+
 		IJ.setForegroundColor(255, 0, 0);
 		goodRows = new ArrayList<>();
 		try {
@@ -408,11 +262,11 @@ private void processEsferoidUsingThresholdOld(ImagePlus imp2) {
 			frame.setSize(300, 100);
 			frame.setVisible(true);
 
-			// We store the list of nd2 files in the result list.
+			// We store the list of tiff files in the result list.
 			File folder = new File(dir);
 			List<String> result = new ArrayList<String>();
 
-			Utils.search(".*\\.tif", folder, result);
+			Utils.search(".*fluo.tif", folder, result);
 			Collections.sort(result);
 			// We initialize the ResultsTable
 			ResultsTable rt = new ResultsTable();
@@ -422,7 +276,8 @@ private void processEsferoidUsingThresholdOld(ImagePlus imp2) {
 			// creates
 			// a new image with the detected region marked in red.
 			for (String name : result) {
-				detectEsferoide(options, dir, name);
+				
+				detectEsferoideFluo(options, dir, name);
 			}
 			rt = ResultsTable.getResultsTable();
 			/// Remove empty rows
@@ -463,14 +318,5 @@ private void processEsferoidUsingThresholdOld(ImagePlus imp2) {
 		}
 
 	}
-
-//	public static void main(final String... args) throws Exception {
-//		// Launch ImageJ as usual.
-//		final ImageJ ij = new ImageJ();
-//		ij.launch(args);
-//
-//		// Launch the "CommandWithPreview" command.
-//		ij.command().run(EsferoideJ_.class, true);
-//	}
 
 }
