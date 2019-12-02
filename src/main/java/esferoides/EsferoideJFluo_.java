@@ -15,6 +15,7 @@ import javax.swing.JProgressBar;
 import javax.swing.border.Border;
 
 import org.scijava.command.Command;
+import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 
 import ij.IJ;
@@ -32,6 +33,9 @@ import loci.plugins.in.ImporterOptions;
 
 @Plugin(type = Command.class, headless = true, menuPath = "Plugins>EsferoideJFluo")
 public class EsferoideJFluo_ implements Command {
+	
+	@Parameter(label = "Suspension or Colageno", choices = {"suspension","colageno"})
+	private String type="suspension";
 
 	private static ArrayList<Integer> goodRows;
 
@@ -49,7 +53,7 @@ public class EsferoideJFluo_ implements Command {
 		IJ.run(imp1, "RGB Color", "");
 
 		String name = imp1.getTitle();
-		
+
 		// FileInfo f = imp1.getFileInfo();
 		name = name.substring(0, name.indexOf("."));
 
@@ -61,7 +65,7 @@ public class EsferoideJFluo_ implements Command {
 			keepBiggestROI(rm);
 			rm.runCommand("Show None");
 			rm.runCommand("Show All");
-			
+
 			Roi[] roi = rm.getRoisAsArray();
 
 			if (roi.length != 0) {
@@ -195,20 +199,22 @@ public class EsferoideJFluo_ implements Command {
 		IJ.run(imp2, "Convert to Mask", "");
 	}
 
-	private void processEsferoidFluo(ImagePlus imp2) {
+	private void processEsferoidFluo(ImagePlus imp2, boolean threshold) {
 		IJ.run(imp2, "8-bit", "");
 		IJ.setAutoThreshold(imp2, "Otsu dark");
-		IJ.setRawThreshold(imp2, 40, 255, null);
+		if (threshold) {
+			IJ.setRawThreshold(imp2, 40, 255, null);// 40
+		}
 		IJ.run(imp2, "Convert to Mask", "");
 	}
 
 	// Method to detect esferoides.
-	private void detectEsferoideFluo(ImporterOptions options, String dir, String name)
+	private void detectEsferoideFluoColageno(ImporterOptions options, String dir, String name)
 			throws FormatException, IOException {
-		
+
 		ImagePlus impFluo = IJ.openImage(name);
 
-		name=name.replace("fluo", "");
+		name = name.replace("fluo", "");
 		ImagePlus impNoFluo = IJ.openImage(name);
 
 		String title = impNoFluo.getTitle();
@@ -216,20 +222,56 @@ public class EsferoideJFluo_ implements Command {
 		ImagePlus imp = impNoFluo.duplicate();
 		imp.setTitle(title);
 
-		processEsferoidFluo(impFluo);
+		processEsferoidFluo(impFluo, true);
 		processEsferoidNoFluo(impNoFluo);
 		ImageCalculator ic = new ImageCalculator();
 		ImagePlus imp3 = ic.run("Add create", impFluo, impNoFluo);
 		IJ.run(imp3, "Fill Holes", "");
 		RoiManager rm = analyzeParticles(imp3, false);
-		
+
 		imp3.close();
 		impFluo.close();
 		impNoFluo.close();
 		showResultsAndSave(dir, imp, rm);
 		imp.close();
+
+	}
+
+	// Method to detect esferoides.
+	private void detectEsferoideFluoSuspension(ImporterOptions options, String dir, String name)
+			throws FormatException, IOException {
+
+		ImagePlus impFluo = IJ.openImage(name);
+
+		name = name.replace("fluo", "");
+		ImagePlus impNoFluo = IJ.openImage(name);
+
+		/*String title = impNoFluo.getTitle();
+
+		ImagePlus imp = impNoFluo.duplicate();
+		imp.setTitle(title);*/
+
+		processEsferoidFluo(impFluo,false);
+		/*processEsferoidNoFluo(impNoFluo);
+		IJ.run(impFluo, "Dilate", "");
 		
 		
+		ImageCalculator ic = new ImageCalculator();
+		ImagePlus imp3 = ic.run("AND create", impFluo, impNoFluo);
+		IJ.run(impFluo, "Erode", "");
+		IJ.run(impFluo, "Erode", "");
+		ImagePlus imp4 = ic.run("Add create", impFluo, imp3);
+		
+		IJ.run(imp4, "Fill Holes", "");*/
+		RoiManager rm = analyzeParticles(impFluo, false);
+
+		
+		impFluo.close();
+		
+		
+		showResultsAndSave(dir, impNoFluo, rm);
+		impNoFluo.close();
+
 	}
 
 	@Override
@@ -276,8 +318,11 @@ public class EsferoideJFluo_ implements Command {
 			// creates
 			// a new image with the detected region marked in red.
 			for (String name : result) {
-				
-				detectEsferoideFluo(options, dir, name);
+				if(type.equals("colageno")) {
+					detectEsferoideFluoColageno(options, dir, name);
+				}else {
+					detectEsferoideFluoSuspension(options, dir, name);
+				}
 			}
 			rt = ResultsTable.getResultsTable();
 			/// Remove empty rows
