@@ -1,4 +1,4 @@
-package esferoides;
+package oldclasses;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -18,6 +18,8 @@ import org.scijava.command.Command;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 
+import esferoides.ExportToExcel;
+import esferoides.Utils;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.Roi;
@@ -31,7 +33,7 @@ import ij.process.ImageStatistics;
 import loci.formats.FormatException;
 import loci.plugins.in.ImporterOptions;
 
-@Plugin(type = Command.class, headless = true, menuPath = "Plugins>EsferoideJFluo")
+//@Plugin(type = Command.class, headless = true, menuPath = "Plugins>EsferoideJFluo")
 public class EsferoideJFluo_ implements Command {
 	
 	@Parameter(label = "Suspension or Colageno", choices = {"suspension","colageno"})

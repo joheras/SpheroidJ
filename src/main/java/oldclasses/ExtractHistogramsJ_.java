@@ -1,4 +1,4 @@
-package esferoides;
+package oldclasses;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -14,6 +14,7 @@ import org.scijava.command.Command;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 
+import esferoides.Utils;
 import ij.ImagePlus;
 import ij.io.DirectoryChooser;
 import ij.process.ImageProcessor;

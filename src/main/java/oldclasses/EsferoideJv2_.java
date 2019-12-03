@@ -1,4 +1,4 @@
-package esferoides;
+package oldclasses;
 
 import ij.IJ;
 
@@ -31,8 +31,12 @@ import javax.swing.border.Border;
 import org.scijava.command.Command;
 import org.scijava.plugin.Plugin;
 
+import esferoides.AnalyseParticleMethods;
+import esferoides.ExportToExcel;
+import esferoides.Utils;
+
 //@Plugin(type = Command.class, headless = true, menuPath = "Plugins>Esferoids>EsferoideJ")
-@Plugin(type = Command.class, headless = true, menuPath = "Plugins>EsferoideJv2")
+//@Plugin(type = Command.class, headless = true, menuPath = "Plugins>EsferoideJv2")
 public class EsferoideJv2_ implements Command {
 
 //	@Parameter
@@ -200,19 +204,7 @@ public class EsferoideJv2_ implements Command {
 
 	}
 
-	private RoiManager analyzeParticles(ImagePlus imp2, boolean blackHole) {
-		IJ.run(imp2, "Analyze Particles...", "size=0.01-Infinity circularity=0.15-2.00 show=Outlines exclude add");
-		imp2.changes=false;
-		ImagePlus imp3 = IJ.getImage();
-		imp2.close();
-		imp3.close();
 
-		RoiManager rm = RoiManager.getInstance();
-		if (rm != null) {
-			rm.setVisible(false);
-		}
-		return rm;
-	}
 
 	private void processEsferoidUsingThreshold(ImagePlus imp2,boolean dilate) {
 		
@@ -323,10 +315,10 @@ private void processEsferoidUsingThresholdOld(ImagePlus imp2) {
 		RoiManager rm = null;
 //
 		processEsferoidUsingThreshold(imp2,true);
-		rm = analyzeParticles(imp2, false);
+		rm = AnalyseParticleMethods.analyzeParticlesHector(imp2);
 		if (rm == null || rm.getRoisAsArray().length == 0) {
 			processEsferoidUsingThreshold(imp2,false);
-			rm = analyzeParticles(imp2, false);
+			rm = AnalyseParticleMethods.analyzeParticlesHector(imp2);
 		}
 	
 
