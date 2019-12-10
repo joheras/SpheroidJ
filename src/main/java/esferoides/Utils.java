@@ -46,13 +46,14 @@ public class Utils {
 	// image in a given directory. Since we know that there is only one esferoide
 	// per image, we
 	// only keep the ROI with the biggest area stored in the ROI Manager.
-	public static void showResultsAndSave(String dir, ImagePlus imp1, RoiManager rm,ArrayList<Integer> goodRows) throws IOException {
+	public static void showResultsAndSave(String dir, String name, ImagePlus imp1, RoiManager rm,ArrayList<Integer> goodRows) throws IOException {
+	
 		IJ.run(imp1, "RGB Color", "");
 
-		String name = imp1.getTitle();
+		//String name = imp1.getTitle();
 
 		// FileInfo f = imp1.getFileInfo();
-		name = name.substring(0, name.indexOf("."));
+		name = name.substring(0, name.lastIndexOf("."));
 
 		ImageStatistics stats = null;
 		double[] vFeret;// = 0;
@@ -77,7 +78,7 @@ public class Utils {
 				roi = rm.getRoisAsArray();
 
 				rm.runCommand(imp1, "Draw");
-				rm.runCommand("Save", dir + name + ".zip");
+				rm.runCommand("Save", name + ".zip");
 				rm.close();
 				// saving the roi
 				// compute the statistics (without calibrate)
@@ -127,7 +128,7 @@ public class Utils {
 			}
 		}
 
-		IJ.saveAs(imp1, "Tiff", dir + name + "_pred.tiff");
+		IJ.saveAs(imp1, "Tiff", name + "_pred.tiff");
 	}
 
 	// Method to obtain the area from a polygon. Probably, there is a most direct

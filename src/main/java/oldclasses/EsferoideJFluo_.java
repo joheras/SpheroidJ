@@ -51,10 +51,10 @@ public class EsferoideJFluo_ implements Command {
 	// image in a given directory. Since we know that there is only one esferoide
 	// per image, we
 	// only keep the ROI with the biggest area stored in the ROI Manager.
-	private static void showResultsAndSave(String dir, ImagePlus imp1, RoiManager rm) throws IOException {
+	private static void showResultsAndSave(String dir, String name, ImagePlus imp1, RoiManager rm) throws IOException {
 		IJ.run(imp1, "RGB Color", "");
 
-		String name = imp1.getTitle();
+		/*String name = imp1.getTitle();*/
 
 		// FileInfo f = imp1.getFileInfo();
 		name = name.substring(0, name.indexOf("."));
@@ -234,7 +234,7 @@ public class EsferoideJFluo_ implements Command {
 		imp3.close();
 		impFluo.close();
 		impNoFluo.close();
-		showResultsAndSave(dir, imp, rm);
+		showResultsAndSave(dir, name,imp, rm);
 		imp.close();
 
 	}
@@ -271,7 +271,7 @@ public class EsferoideJFluo_ implements Command {
 		impFluo.close();
 		
 		
-		showResultsAndSave(dir, impNoFluo, rm);
+		showResultsAndSave(dir,name, impNoFluo, rm);
 		impNoFluo.close();
 
 	}

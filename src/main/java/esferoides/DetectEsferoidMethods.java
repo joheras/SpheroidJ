@@ -39,7 +39,7 @@ public class DetectEsferoidMethods {
 		impFluo.close();
 		impNoFluo.close();
 		try {
-			Utils.showResultsAndSave(dir, imp, rm, goodRows);
+			Utils.showResultsAndSave(dir,name, imp, rm, goodRows);
 			imp.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -63,7 +63,7 @@ public class DetectEsferoidMethods {
 		impFluo.close();
 
 		try {
-			Utils.showResultsAndSave(dir, impNoFluo, rm, goodRows);
+			Utils.showResultsAndSave(dir,name, impNoFluo, rm, goodRows);
 			impNoFluo.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -93,7 +93,7 @@ public class DetectEsferoidMethods {
 		}
 
 		try {
-			Utils.showResultsAndSave(dir, imp, rm, goodRows);
+			Utils.showResultsAndSave(dir,name, imp, rm, goodRows);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -161,7 +161,7 @@ public class DetectEsferoidMethods {
 		}
 
 		try {
-			Utils.showResultsAndSave(dir, imp, rm, goodRows);
+			Utils.showResultsAndSave(dir,name, imp, rm, goodRows);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -200,7 +200,7 @@ public class DetectEsferoidMethods {
 				iters++;
 			}
 
-			Utils.showResultsAndSave(dir, imp, rm, goodRows);
+			Utils.showResultsAndSave(dir,name, imp, rm, goodRows);
 			imp.close();
 		} catch (FormatException | IOException e) {
 			// TODO Auto-generated catch block
