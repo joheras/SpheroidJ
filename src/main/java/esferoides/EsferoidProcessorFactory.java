@@ -24,7 +24,7 @@ public class EsferoidProcessorFactory {
 		}
 		case "Hector no fluo v2": {
 			esferoidProcessor = new EsferoidProcessor(SearchFilesMethods::searchFilesHectorNoFluo,
-					DetectEsferoidMethods::detectEsferoideHectorv1);
+					DetectEsferoidMethods::detectEsferoideHectorv2);
 			break;
 		}
 		case "Teodora v1": {
