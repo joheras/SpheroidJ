@@ -39,7 +39,7 @@ public class DetectEsferoidMethods {
 		impFluo.close();
 		impNoFluo.close();
 		try {
-			Utils.showResultsAndSave(dir,name, imp, rm, goodRows);
+			Utils.showResultsAndSave(dir, name, imp, rm, goodRows);
 			imp.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -63,7 +63,7 @@ public class DetectEsferoidMethods {
 		impFluo.close();
 
 		try {
-			Utils.showResultsAndSave(dir,name, impNoFluo, rm, goodRows);
+			Utils.showResultsAndSave(dir, name, impNoFluo, rm, goodRows);
 			impNoFluo.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -93,7 +93,7 @@ public class DetectEsferoidMethods {
 		}
 
 		try {
-			Utils.showResultsAndSave(dir,name, imp, rm, goodRows);
+			Utils.showResultsAndSave(dir, name, imp, rm, goodRows);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -161,7 +161,7 @@ public class DetectEsferoidMethods {
 		}
 
 		try {
-			Utils.showResultsAndSave(dir,name, imp, rm, goodRows);
+			Utils.showResultsAndSave(dir, name, imp, rm, goodRows);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -171,7 +171,8 @@ public class DetectEsferoidMethods {
 	}
 
 	// Method to detect esferoides.
-	public static void detectEsferoideTeodora(ImporterOptions options, String dir, String name, ArrayList<Integer> goodRows) {
+	public static void detectEsferoideTeodora(ImporterOptions options, String dir, String name,
+			ArrayList<Integer> goodRows) {
 		options.setId(name);
 
 		ImagePlus[] imps;
@@ -181,26 +182,68 @@ public class DetectEsferoidMethods {
 			ImagePlus imp = imps[0];
 			ImagePlus imp2 = imp.duplicate();
 
-			/// We consider two cases, when there is a "black hole" in the image (the first
-			/// case), there is a lot of pixels below a given threshold, and those pixels
-			/// belong to the Esferoide. In addition to be a black hole, there must be a
-			/// difference between that region and the rest of the image.
-//			int count = countBelowThreshold(imp2, 1100);
-//			boolean realBlackHole = countBetweenThresholdOver(imp2, 1100, 2000, 1500);
-//			System.out.println(realBlackHole);
 			RoiManager rm;
 
 			DetectEsferoidImageMethods.processEsferoidEdges(imp2, 0);
-			rm = AnalyseParticleMethods.analyseParticlesTeodora(imp2, false);
-
+			rm = AnalyseParticleMethods.analyseParticlesTeodora(imp2, false,true);
 			int iters = 1;
-			while (rm == null || rm.getRoisAsArray().length == 0) {
+			while ((rm == null || rm.getRoisAsArray().length == 0) && iters < 7) {
 				DetectEsferoidImageMethods.processEsferoidEdges(imp2, iters);
-				rm = AnalyseParticleMethods.analyseParticlesTeodora(imp2, false);
+				rm = AnalyseParticleMethods.analyseParticlesTeodora(imp2, false,true);
 				iters++;
 			}
 
-			Utils.showResultsAndSave(dir,name, imp, rm, goodRows);
+			Utils.showResultsAndSave(dir, name, imp, rm, goodRows);
+			imp.close();
+		} catch (FormatException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+
+	// Method to detect esferoides.
+	public static void detectEsferoideTeodoraBig(ImporterOptions options, String dir, String name,
+			ArrayList<Integer> goodRows) {
+		options.setId(name);
+
+		ImagePlus[] imps;
+		try {
+			imps = BF.openImagePlus(options);
+
+			ImagePlus imp = imps[0];
+			ImagePlus imp2 = imp.duplicate();
+
+			RoiManager rm;
+
+			int count = Utils.countBelowThreshold(imp2, 1100);
+			boolean realBlackHole1 = Utils.countBetweenThresholdOver(imp2, 1100, 2000, 1500);
+			boolean realBlackHole2 = Utils.countBelowThreshold(imp2, 3000) < 200000;
+			
+			if (count > 100 && realBlackHole2 && realBlackHole1) {
+				
+				if (count > 10000) {
+					DetectEsferoidImageMethods.processBlackHoles(imp2, false);
+				} else {
+					DetectEsferoidImageMethods.processBlackHoles(imp2, true);
+				}
+				rm = AnalyseParticleMethods.analyseParticlesTeodora(imp2, true,true);
+			} else {
+				DetectEsferoidImageMethods.processEsferoidBig(imp2);
+				rm = AnalyseParticleMethods.analyseParticlesTeodora(imp2, false,false);
+			}
+			
+			imp2=imp.duplicate();
+			int iters = 0;
+			while ((rm == null || rm.getRoisAsArray().length == 0) && iters < 7) {
+				DetectEsferoidImageMethods.processEsferoidEdges(imp2, iters);
+				rm = AnalyseParticleMethods.analyseParticlesTeodora(imp2, false,false);
+				iters++;
+			}
+			
+
+			Utils.showResultsAndSave(dir, name, imp, rm, goodRows);
 			imp.close();
 		} catch (FormatException | IOException e) {
 			// TODO Auto-generated catch block

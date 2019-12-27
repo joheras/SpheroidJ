@@ -21,21 +21,17 @@ import org.scijava.plugin.Plugin;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.Roi;
-import ij.io.DirectoryChooser;
-import ij.measure.Calibration;
 import ij.measure.ResultsTable;
-import ij.plugin.ImageCalculator;
-import ij.plugin.filter.Analyzer;
-import ij.plugin.frame.RoiManager;
-import ij.process.ImageStatistics;
 import loci.formats.FormatException;
 import loci.plugins.in.ImporterOptions;
+import net.imagej.ImageJ;
+
 
 @Plugin(type = Command.class, headless = true, menuPath = "Plugins>EsferoideJ")
 public class EsferoideJ_ implements Command {
 
 	@Parameter(label = "Select type of images", choices = { "suspension", "colageno", "Hector no fluo v1",
-			"Hector no fluo v2", "Teodora v1" })
+			"Hector no fluo v2", "Teodora v1", "Teodora Big" })
 	private String type = "suspension";
 
 	@Parameter(label = "Fix the scale")
@@ -49,12 +45,12 @@ public class EsferoideJ_ implements Command {
 		try {
 
 			if (setScale) {
-				
+
 				ImagePlus imp = IJ.createImage("Untitled", "8-bit white", 1, 1, 1);
 				IJ.run(imp, "Set Scale...", "");
 				imp.close();
 			}
-			
+
 			// We initialize the ResultsTable
 			ResultsTable rt = new ResultsTable();
 			ImporterOptions options = new ImporterOptions();
@@ -115,5 +111,6 @@ public class EsferoideJ_ implements Command {
 		}
 
 	}
+
 
 }

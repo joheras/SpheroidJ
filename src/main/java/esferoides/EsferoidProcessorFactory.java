@@ -32,6 +32,13 @@ public class EsferoidProcessorFactory {
 					DetectEsferoidMethods::detectEsferoideTeodora);
 			break;
 		}
+		
+		
+		case "Teodora Big": {
+			esferoidProcessor = new EsferoidProcessor(SearchFilesMethods::searchFilesTeodora,
+					DetectEsferoidMethods::detectEsferoideTeodoraBig);
+			break;
+		}
 
 		}
 

@@ -432,12 +432,12 @@ public class EsferoideJv1_ implements Command {
 		RoiManager rm;
 
 		processEsferoidEdges(imp2, 0);
-		rm = AnalyseParticleMethods.analyseParticlesTeodora(imp2, false);
+		rm = AnalyseParticleMethods.analyseParticlesTeodora(imp2, false,true);
 
 		int iters = 1;
 		while (rm == null || rm.getRoisAsArray().length == 0) {
 			processEsferoidEdges(imp2, iters);
-			rm = AnalyseParticleMethods.analyseParticlesTeodora(imp2, false);
+			rm = AnalyseParticleMethods.analyseParticlesTeodora(imp2, false,true);
 			iters++;
 		}
 
@@ -654,8 +654,8 @@ public class EsferoideJv1_ implements Command {
 //			rt.saveAs(dir + "results.csv");
 			// When the process is finished, we show a message to inform the user.
 
-			ExportToExcel ete = new ExportToExcel(rt, dir);
-			ete.convertToExcel();
+			//ExportToExcel ete = new ExportToExcel(rt, dir);
+			//ete.convertToExcel();
 
 			rt.reset();
 

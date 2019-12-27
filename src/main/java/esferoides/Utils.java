@@ -13,6 +13,7 @@ import ij.measure.Calibration;
 import ij.measure.ResultsTable;
 import ij.plugin.filter.Analyzer;
 import ij.plugin.frame.RoiManager;
+import ij.process.ImageProcessor;
 import ij.process.ImageStatistics;
 
 public class Utils {
@@ -172,6 +173,56 @@ public class Utils {
 			rm.addRoi(biggestROI);
 
 		}
+
+	}
+	
+	public static  int countBelowThreshold(ImagePlus imp1, int threshold) {
+
+		ImageProcessor ip = imp1.getProcessor();
+		int[] histogram = ip.getHistogram();
+
+		int countpixels = 0;
+		for (int i = 0; i < threshold; i++) {
+			countpixels = countpixels + histogram[i];
+		}
+
+		return countpixels;
+
+	}
+	
+	
+	public static boolean countBetweenThresholdOver(ImagePlus imp1, int threshold1,int threshold2, int num) {
+
+		ImageProcessor ip = imp1.getProcessor();
+		int[] histogram = ip.getHistogram(256);
+		ImageStatistics is = ip.getStatistics();
+		double min = is.min;
+//		System.out.println(min);
+		double max = is.max;
+//		System.out.println(max);
+		double range = (max-min)/256;
+		
+		
+		
+		
+		int i = 0;
+		double pos = min;
+		while(pos<threshold1) {
+			pos = pos + range;
+			i++;
+			
+		}
+		
+		while(pos<threshold2) {
+			if(histogram[i]<num) {
+				return true;
+			}
+			i++;
+			pos = pos + range;
+			System.out.println(pos);
+		}
+		
+		return false;
 
 	}
 
