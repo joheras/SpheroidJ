@@ -2,8 +2,11 @@ package esferoides;
 
 import ij.IJ;
 import ij.ImagePlus;
+import ij.ImageStack;
 import ij.Prefs;
+import ij.measure.Calibration;
 import ij.plugin.ImageCalculator;
+import ij.plugin.frame.RoiManager;
 import ij.process.ImageStatistics;
 
 public class DetectEsferoidImageMethods {
@@ -15,13 +18,20 @@ public class DetectEsferoidImageMethods {
 		IJ.setRawThreshold(imp2, 30, 255, null);
 		IJ.run(imp2, "Convert to Mask", "");
 	}
+	
+	public static void processEsferoidNoFluoBis(ImagePlus imp2) {
+		
+		IJ.run(imp2, "Find Edges", "");
+		IJ.setAutoThreshold(imp2, "Default dark");
+		IJ.setRawThreshold(imp2, 3000, 65550, null);
+		IJ.run(imp2, "Convert to Mask", "");
+	}
+	
+	
 
 	public static void processEsferoidFluo(ImagePlus imp2, boolean threshold) {
 		IJ.run(imp2, "8-bit", "");
-		IJ.setAutoThreshold(imp2, "Otsu dark");
-		if (threshold) {
-			IJ.setRawThreshold(imp2, 40, 255, null);// 40
-		}
+		IJ.setAutoThreshold(imp2, "Li dark");
 		IJ.run(imp2, "Convert to Mask", "");
 	}
 
@@ -292,4 +302,8 @@ public class DetectEsferoidImageMethods {
 		
 	}
 
+	
+	
+	
+	
 }

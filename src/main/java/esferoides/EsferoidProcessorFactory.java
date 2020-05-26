@@ -39,6 +39,12 @@ public class EsferoidProcessorFactory {
 					DetectEsferoidMethods::detectEsferoideTeodoraBig);
 			break;
 		}
+		
+		case "Hector fluo stack": {
+			esferoidProcessor = new EsferoidProcessor(SearchFilesMethods::searchFilesTeodora,
+					DetectEsferoidMethods::detectEsferoideFluoStack);
+			break;
+		}
 
 		}
 

@@ -3,6 +3,7 @@ package esferoides;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -27,6 +28,7 @@ public class SearchFilesMethods {
 			
 
 			Utils.search(".*fluo.tif", folder, result);
+			
 			Collections.sort(result);
 			result.add(0,dir);
 			return result;
@@ -73,6 +75,7 @@ public class SearchFilesMethods {
 
 		try {
 			List<String> result = new ArrayList<String>();
+			List<String> resultFin = new ArrayList<String>();
 			ImporterOptions options = new ImporterOptions();
 
 			options.setWindowless(true);
@@ -87,7 +90,13 @@ public class SearchFilesMethods {
 			Utils.search(".*\\.tif", folder, result);
 			Collections.sort(result);
 			result.add(0,dir);
-			return result;
+			for(String f: result) {
+				if(!(f.contains("fluo"))) {
+					resultFin.add(f);
+				}
+			}
+			
+			return resultFin;
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
