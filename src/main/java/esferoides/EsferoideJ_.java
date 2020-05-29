@@ -31,7 +31,7 @@ import net.imagej.ImageJ;
 public class EsferoideJ_ implements Command {
 
 	@Parameter(label = "Select type of images", choices = { "suspension", "colageno", "Hector no fluo v1",
-			"Hector no fluo v2", "Teodora v1", "Teodora Big", "Hector fluo stack" })
+			"Hector no fluo v2", "Teodora v1", "Teodora Big", "Hector fluo stack", "Teniposide" })
 	private String type = "suspension";
 
 	@Parameter(label = "Fix the scale")

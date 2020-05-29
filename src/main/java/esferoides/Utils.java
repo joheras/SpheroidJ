@@ -137,7 +137,7 @@ public class Utils {
 
 	// Method to obtain the area from a polygon. Probably, there is a most direct
 	// method to do this.
-	private static final double getArea(Polygon p) {
+	protected static final double getArea(Polygon p) {
 		if (p == null)
 			return Double.NaN;
 		int carea = 0;
@@ -154,8 +154,8 @@ public class Utils {
 	// Method to keep the ROI with the biggest area stored in the ROIManager, the
 	// rest of ROIs are
 	// deleted.
-	private static void keepBiggestROI(RoiManager rm) {
-
+	protected static void keepBiggestROI(RoiManager rm) {
+		if(rm!=null) {
 		Roi[] rois = rm.getRoisAsArray();
 
 		if (rois.length >= 1) {
@@ -177,7 +177,7 @@ public class Utils {
 
 		}
 
-	}
+	}}
 	
 	public static  int countBelowThreshold(ImagePlus imp1, int threshold) {
 

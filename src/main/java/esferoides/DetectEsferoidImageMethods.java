@@ -18,16 +18,21 @@ public class DetectEsferoidImageMethods {
 		IJ.setRawThreshold(imp2, 30, 255, null);
 		IJ.run(imp2, "Convert to Mask", "");
 	}
-	
+
 	public static void processEsferoidNoFluoBis(ImagePlus imp2) {
-		
+
 		IJ.run(imp2, "Find Edges", "");
 		IJ.setAutoThreshold(imp2, "Default dark");
 		IJ.setRawThreshold(imp2, 3000, 65550, null);
 		IJ.run(imp2, "Convert to Mask", "");
 	}
-	
-	
+
+	public static void processEsferoidNoFluoThreshold(ImagePlus imp2) {
+
+		IJ.setAutoThreshold(imp2, "Default");
+		IJ.setRawThreshold(imp2, 0, 5000, null);
+		IJ.run(imp2, "Convert to Mask", "");
+	}
 
 	public static void processEsferoidFluo(ImagePlus imp2, boolean threshold) {
 		IJ.run(imp2, "8-bit", "");
@@ -284,10 +289,10 @@ public class DetectEsferoidImageMethods {
 	}
 
 	public static void processEsferoidBig(ImagePlus imp2) {
-		
+
 		ImagePlus imp1 = imp2.duplicate();
 		imp1.show();
-		IJ.setAutoThreshold(imp1, "Default"); 
+		IJ.setAutoThreshold(imp1, "Default");
 		IJ.run(imp1, "Convert to Mask", "");
 		IJ.run(imp2, "Find Edges", "");
 		IJ.run(imp2, "Find Edges", "");
@@ -296,14 +301,33 @@ public class DetectEsferoidImageMethods {
 		ImageCalculator ic = new ImageCalculator();
 		ic.run("ADD", imp2, imp1);
 		IJ.run(imp2, "Fill Holes", "");
-		imp1.changes=false;
-		//imp2.changes=false;
+		imp1.changes = false;
+		// imp2.changes=false;
 		imp1.close();
-		
+
 	}
 
-	
-	
-	
-	
+	public static void processEsferoidEdgesThreshold(ImagePlus imp2, int min, int max) {
+
+		IJ.run(imp2, "Find Edges", "");
+		IJ.run(imp2, "8-bit", "");
+		IJ.setAutoThreshold(imp2, "Default dark");
+		IJ.setRawThreshold(imp2, min, max, null);
+		IJ.run(imp2, "Convert to Mask", "");
+		IJ.run(imp2, "Fill Holes", "");
+	}
+
+	public static void processEsferoidEdgesThresholdDilateErode(ImagePlus imp2, int min, int max) {
+
+		IJ.run(imp2, "Find Edges", "");
+		IJ.run(imp2, "8-bit", "");
+		IJ.setAutoThreshold(imp2, "Default dark");
+		IJ.setRawThreshold(imp2, min, max, null);
+		IJ.run(imp2, "Convert to Mask", "");
+		IJ.run(imp2, "Fill Holes", "");
+		IJ.run(imp2, "Dilate", "");
+		IJ.run(imp2, "Fill Holes", "");
+		IJ.run(imp2, "Erode", "");
+	}
+
 }

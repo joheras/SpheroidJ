@@ -45,6 +45,12 @@ public class EsferoidProcessorFactory {
 					DetectEsferoidMethods::detectEsferoideFluoStack);
 			break;
 		}
+		
+		case "Teniposide": {
+			esferoidProcessor = new EsferoidProcessor(SearchFilesMethods::searchFilesJPG,
+					DetectEsferoidMethods::detectEsferoideTeniposide);
+			break;
+		}
 
 		}
 

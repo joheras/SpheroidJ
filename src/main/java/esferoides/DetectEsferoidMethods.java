@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
+import ij.gui.Roi;
 import ij.measure.Calibration;
 import ij.plugin.ImageCalculator;
 import ij.plugin.frame.RoiManager;
@@ -264,33 +265,61 @@ public class DetectEsferoidMethods {
 			ImagePlus imp = imps[0];
 
 			ImageStack stack = imp.getStack();
-			
-			
-		
+
 			Calibration cal = imp.getCalibration();
-			ImagePlus impFluo = new ImagePlus(
-			stack.getSliceLabel( 2 ),
-			stack.getProcessor( 2 ) );
-			impFluo.setCalibration( cal );
+			ImagePlus impFluo = new ImagePlus(stack.getSliceLabel(2), stack.getProcessor(2));
+			impFluo.setCalibration(cal);
 
-			ImagePlus impNoFluo = new ImagePlus(
-			stack.getSliceLabel( 1 ),
-			stack.getProcessor( 1 ) );
-			impFluo.setCalibration( cal );
-			
+			ImagePlus impNoFluo = new ImagePlus(stack.getSliceLabel(1), stack.getProcessor(1));
+			impFluo.setCalibration(cal);
+
 			imp = impNoFluo.duplicate();
-			
 
-			DetectEsferoidImageMethods.processEsferoidFluo(impFluo, true);
-			DetectEsferoidImageMethods.processEsferoidNoFluoBis(impNoFluo);
-			ImageCalculator ic = new ImageCalculator();
-			ImagePlus imp3 = ic.run("Add create", impFluo, impFluo);
-			IJ.run(imp3, "Fill Holes", "");
-			RoiManager rm = AnalyseParticleMethods.analyzeParticlesFluo(imp3);
+			ImagePlus impFluoD = impFluo.duplicate();
+			DetectEsferoidImageMethods.processEsferoidFluo(impFluoD, true);
+			RoiManager rm = AnalyseParticleMethods.analyzeParticlesHector(impFluoD);
+			Utils.keepBiggestROI(rm);
+			Roi r = rm.getRoi(0);
+			ImageStatistics stats = r.getStatistics();
+			impFluoD.close();
 
-			imp3.close();
-			impFluo.close();
-			impNoFluo.close();
+			if (stats.area > 10000) {
+				rm.runCommand("Select All");
+				rm.runCommand("Delete");
+
+				ImagePlus impNoFluoD = impNoFluo.duplicate();
+				DetectEsferoidImageMethods.processEsferoidNoFluoThreshold(impNoFluoD);
+				rm = AnalyseParticleMethods.analyzeParticlesHector(impNoFluoD);
+				Utils.keepBiggestROI(rm);
+
+				double round = 0;
+
+				if (rm.getRoisAsArray().length > 0) {
+					r = rm.getRoi(0);
+					stats = r.getStatistics();
+					impNoFluoD.close();
+					round = 4.0 * (stats.area / (Math.PI * stats.major * stats.major));
+				}
+				if (round < 0.9) {
+					rm.runCommand("Select All");
+					rm.runCommand("Delete");
+					System.out.println("Round less than 0.9");
+					impFluoD = impFluo.duplicate();
+					DetectEsferoidImageMethods.processEsferoidFluo(impFluoD, true);
+					DetectEsferoidImageMethods.processEsferoidNoFluoBis(impNoFluo);
+					ImageCalculator ic = new ImageCalculator();
+					ImagePlus imp3 = ic.run("And create", impFluoD, impNoFluo);
+					IJ.run(imp3, "Fill Holes", "");
+
+					imp3 = ic.run("ADD create", imp3, impFluoD);
+					rm = AnalyseParticleMethods.analyzeParticlesFluo(imp3);
+					imp3.close();
+					impFluoD.close();
+					impNoFluo.close();
+
+				}
+
+			}
 
 			Utils.showResultsAndSave(dir, name, imp, rm, goodRows);
 			imp.close();
@@ -302,6 +331,40 @@ public class DetectEsferoidMethods {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	// Method to detect esferoides.
+	public static void detectEsferoideTeniposide(ImporterOptions options, String dir, String name,
+			ArrayList<Integer> goodRows) {
+
+		ImagePlus imp = IJ.openImage(name);
+
+		ImagePlus impD = imp.duplicate();
+
+		DetectEsferoidImageMethods.processEsferoidEdgesThreshold(impD, 22, 255);
+		RoiManager rm = AnalyseParticleMethods.analyzeParticlesFluo(impD);
+		
+		if (rm.getRoisAsArray().length > 0) {
+			Roi r = rm.getRoi(0);
+			ImageStatistics stats = r.getStatistics();
+			double solidity = (stats.area / Utils.getArea(r.getConvexHull()));
+			if(solidity<0.8) {
+				impD = imp.duplicate();
+				DetectEsferoidImageMethods.processEsferoidEdgesThresholdDilateErode(impD, 22, 255);
+				rm = AnalyseParticleMethods.analyzeParticlesFluo(impD);
+			}
+		}
+
+		imp.close();
+
+		try {
+			Utils.showResultsAndSave(dir, name, imp, rm, goodRows);
+			imp.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 }
