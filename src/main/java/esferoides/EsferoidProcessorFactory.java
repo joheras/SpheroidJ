@@ -18,25 +18,31 @@ public class EsferoidProcessorFactory {
 			break;
 		}
 		case "Hector no fluo v1": {
-			esferoidProcessor = new EsferoidProcessor(SearchFilesMethods::searchFilesHectorNoFluo,
+			esferoidProcessor = new EsferoidProcessor(SearchFilesMethods::searchFilesHectorNoFluo,//searchFilesHectorNoFluo
 					DetectEsferoidMethods::detectEsferoideHectorv1);
 			break;
 		}
 		case "Hector no fluo v2": {
-			esferoidProcessor = new EsferoidProcessor(SearchFilesMethods::searchFilesHectorNoFluo,
+			esferoidProcessor = new EsferoidProcessor(SearchFilesMethods::searchFilesHectorNoFluo,//searchFilesHectorNoFluo,
 					DetectEsferoidMethods::detectEsferoideHectorv2);
 			break;
 		}
 		case "Teodora v1": {
-			esferoidProcessor = new EsferoidProcessor(SearchFilesMethods::searchFilesTeodora,
+			esferoidProcessor = new EsferoidProcessor(SearchFilesMethods::searchFilesTeodora,//searchFilesTeodora,
 					DetectEsferoidMethods::detectEsferoideTeodora);
 			break;
 		}
 		
 		
 		case "Teodora Big": {
-			esferoidProcessor = new EsferoidProcessor(SearchFilesMethods::searchFilesTeodora,
+			esferoidProcessor = new EsferoidProcessor(SearchFilesMethods::searchFilesTeodora,//searchFilesTeodora,
 					DetectEsferoidMethods::detectEsferoideTeodoraBig);
+			break;
+		}
+		
+		case "Teodora No Holes": {
+			esferoidProcessor = new EsferoidProcessor(SearchFilesMethods::searchFilesJPG,//searchFilesTeodora,
+					DetectEsferoidMethods::detectEsferoideTeodoraBigNoHoles);
 			break;
 		}
 		
@@ -47,7 +53,7 @@ public class EsferoidProcessorFactory {
 		}
 		
 		case "Teniposide": {
-			esferoidProcessor = new EsferoidProcessor(SearchFilesMethods::searchFilesJPG,
+			esferoidProcessor = new EsferoidProcessor(SearchFilesMethods::searchFilesJPG,//searchFilesJPG,
 					DetectEsferoidMethods::detectEsferoideTeniposide);
 			break;
 		}

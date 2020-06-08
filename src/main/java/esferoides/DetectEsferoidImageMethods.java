@@ -36,7 +36,7 @@ public class DetectEsferoidImageMethods {
 
 	public static void processEsferoidFluo(ImagePlus imp2, boolean threshold) {
 		IJ.run(imp2, "8-bit", "");
-		IJ.setAutoThreshold(imp2, "Li dark");
+		IJ.setAutoThreshold(imp2, "Otsu dark");//Li
 		IJ.run(imp2, "Convert to Mask", "");
 	}
 
@@ -290,6 +290,7 @@ public class DetectEsferoidImageMethods {
 
 	public static void processEsferoidBig(ImagePlus imp2) {
 
+		
 		ImagePlus imp1 = imp2.duplicate();
 		imp1.show();
 		IJ.setAutoThreshold(imp1, "Default");
