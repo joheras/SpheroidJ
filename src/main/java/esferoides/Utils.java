@@ -29,7 +29,7 @@ public class Utils {
 			}
 
 			if (f.isFile()) {
-				if (f.getName().matches(pattern)) {
+				if (f.getName().matches(pattern) && !f.getName().contains("pred")) {
 					result.add(f.getAbsolutePath());
 				}
 			}

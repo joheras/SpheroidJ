@@ -27,12 +27,14 @@ import loci.plugins.in.ImporterOptions;
 import net.imagej.ImageJ;
 
 
-@Plugin(type = Command.class, headless = true, menuPath = "Plugins>EsferoideJ")
+@Plugin(type = Command.class, headless = true, menuPath = "Plugins>SpheroidJ>Batch")
 public class EsferoideJ_ implements Command {
 
-	@Parameter(label = "Select type of images", choices = { "suspension", "colageno", "Hector no fluo v1",
-			"Hector no fluo v2", "Teodora v1", "Teodora Big", "Hector fluo stack", "Teniposide" })
-	private String type = "suspension";
+	@Parameter(label = "Select type of images", choices = {"Threhold", "Edges", "Threshold plus edges", 
+			"Threshold and edges", "Fluorescence"  })
+	//"suspension", "colageno", "Hector no fluo v1",
+	//"Hector no fluo v2", "Teodora v1", "Teodora Big", "Hector fluo stack", "Teniposide"
+	private String type = "Threshold";
 
 	@Parameter(label = "Fix the scale")
 	private boolean setScale = false;
@@ -61,7 +63,7 @@ public class EsferoideJ_ implements Command {
 
 			// We first read the list of files
 			List<String> result = esferoidProcessor.getSearchFiles().apply();
-			;
+			
 			String dir = result.get(0);
 			result.remove(0);
 

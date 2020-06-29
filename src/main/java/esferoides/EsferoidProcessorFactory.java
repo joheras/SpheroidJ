@@ -7,7 +7,7 @@ public class EsferoidProcessorFactory {
 		EsferoidProcessor esferoidProcessor = null;
 
 		switch (name) {
-		case "suspension": {
+		case "Fluorescence": {
 			esferoidProcessor = new EsferoidProcessor(SearchFilesMethods::searchFilesFluo,
 					DetectEsferoidMethods::detectEsferoideFluoSuspension);
 			break;
@@ -17,7 +17,7 @@ public class EsferoidProcessorFactory {
 					DetectEsferoidMethods::detectEsferoideFluoColageno);
 			break;
 		}
-		case "Hector no fluo v1": {
+		case "Edges": {
 			esferoidProcessor = new EsferoidProcessor(SearchFilesMethods::searchFilesHectorNoFluo,//searchFilesHectorNoFluo
 					DetectEsferoidMethods::detectEsferoideHectorv1);
 			break;
@@ -27,14 +27,14 @@ public class EsferoidProcessorFactory {
 					DetectEsferoidMethods::detectEsferoideHectorv2);
 			break;
 		}
-		case "Teodora v1": {
+		case "Threshold plus edges": {
 			esferoidProcessor = new EsferoidProcessor(SearchFilesMethods::searchFilesTeodora,//searchFilesTeodora,
 					DetectEsferoidMethods::detectEsferoideTeodora);
 			break;
 		}
 		
 		
-		case "Teodora Big": {
+		case "Threshold and edges": {
 			esferoidProcessor = new EsferoidProcessor(SearchFilesMethods::searchFilesTeodora,//searchFilesTeodora,
 					DetectEsferoidMethods::detectEsferoideTeodoraBig);
 			break;
@@ -52,7 +52,7 @@ public class EsferoidProcessorFactory {
 			break;
 		}
 		
-		case "Teniposide": {
+		case "Threshold": {
 			esferoidProcessor = new EsferoidProcessor(SearchFilesMethods::searchFilesJPG,//searchFilesJPG,
 					DetectEsferoidMethods::detectEsferoideTeniposide);
 			break;
