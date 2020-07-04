@@ -31,7 +31,13 @@ A graphical interface built on top of ImageJ to employ SpheroidJ can be download
 
 ## Segmentation method
 
-[](general2.png)
+![Method](general2.png)
+
+
+An example of the application of our generic algorithm is presented in the following image.
+
+![Method](example.png)
+(1) Find edges. (2) Thresholding. (3) Dilation. (4) Fill holes. (5) Erosion. (6) Final segmentation (in yellow).
 
 
 ## Datasets and results
