@@ -31,6 +31,9 @@ A graphical interface built on top of ImageJ to employ SpheroidJ can be download
 
 ## Segmentation method
 
+[](general2.png)
+
+
 ## Datasets and results
 
 ### Datasets
