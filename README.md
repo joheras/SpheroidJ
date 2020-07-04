@@ -31,6 +31,8 @@ A graphical interface built on top of ImageJ to employ SpheroidJ can be download
 
 ## Segmentation method
 
+Given an image containing a spheroid, our generic algorithm aims to produce a mask for the region that contains such a spheroid. This process, that is diagrammatically described in the following figure, is based on the sequential application of several image processing techniques, such as edge detection or thresholding, and morphological operations like dilation or erosion. Namely, the procedure can be split into two steps: contour generation and contour refinement.
+
 ![Method](general2.png)
 
 
@@ -38,6 +40,20 @@ An example of the application of our generic algorithm is presented in the follo
 
 ![Method](example.png)
 (1) Find edges. (2) Thresholding. (3) Dilation. (4) Fill holes. (5) Erosion. (6) Final segmentation (in yellow).
+
+### Particular cases
+
+Due to the different nature of spheroid images, we have particularised our generic algorithm using 5 strategies; that is, using different values for the 5 parameters of our segmentation algorithm. In addition, several variants of our algorithm are combined to deal with those cases where a proper spheroid mask is not generated.
+
+*A1. Threshold.* The first strategy is based on just binarising the spheroid images by using the IsoData method. In those cases where such a direct approach does not produce a valid mask, we sequentially binarise the image, dilate it, fill the holes, erode the image, and, finally, apply the watershed operation. This straightforward approach is useful when the spheroid image can be clearly distinguished from the background of the image.  
+
+*A2. Edges.* The second strategy does not directly binarise the image but it firstly finds the edges of the image, and subsequently binarise the image using the IsoData method. In case that the method does not work, the number of iterations that the find edges operation is applied is increased. The process stops after a valid mask is found or when a number of iterations is reached.  
+
+*A3. Threshold+Edges.* This approach is a sequential application of Algorithms A1 and A2. Namely, it starts applying the threshold approach, and if it fails to find a valid mask, it applies the edges approach. 
+
+*A4. Threshold \& edges.* This strategy applies both Algorithms A1 and A2 to the input image, adds the two resulting masks, and fills the holes of the resulting mask to produce the final output.  
+
+*A5. Fluorescence.* Finally, we have designed an algorithm that takes advantage of images acquired with fluorescence. To this aim, the normal image is processed by sequentially finding its edges and binarising it; and, the fluorescence image is binarised using the IsoData thresholding method. The two images produced in this way are combined using the AND binary operation to output the mask. 
 
 
 ## Datasets and results
