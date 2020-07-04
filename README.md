@@ -23,6 +23,16 @@ A graphical interface built on top of ImageJ to employ SpheroidJ can be download
 
 ## Datasets
 
+| Dataset | Method | #Images  |  Image size | Microscope | Magnification | Format | Type | Culture |
+|--------|--------|--------|--------|--------|--------|--------|--------|--------|
+| BL5S | Brightfield | 50 | 1296$ |times$ 966 | Leica | 5x | TIFF | RGB | Suspension | 
+| BN2S | Brightfield | 154 | 1002$ |times$ 1004 | Nikon | 2x | ND2 | Gray 16bits | Suspension | 
+| BN10S | Brightfield | 105 | 1002$ |times$ 1004 | Nikon | 10x | ND2 | Gray 16bits | Suspension | 
+| FL5C | Fluorescence | 19 | 1296$ |times$ 966  | Leica | 5x | TIFF | RGB | Collagen | 
+| FL5S | Fluorescence | 50 | 1296$ |times$ 966 | Leica | 5x | TIFF | RGB | Suspension | 
+| FN2S | Fluorescence | 34 | 1002$ |times$ 1004 | Nikon | 2x | ND2 | Gray 16bits | Suspension  |
+| BO10S | Brightfield | 64 | 3136 $ |times$ 2152 | Olympus | 10x | JPG | RGB | Suspension |
+
 
 ## Acknowledgments 
 
