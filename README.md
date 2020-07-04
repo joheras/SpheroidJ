@@ -2,6 +2,8 @@
 
 SpheroidJ is an [ImageJ](http://imagej.net/Welcome) plugin for spheroid segmentation. 
 
+## Table of contents
+
 1. [Installation](#installation)
 2. [Segmentation method](#segmentation-method)
 3. [Datasets and results](#datasets-and-results)
