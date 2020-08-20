@@ -1,0 +1,15 @@
+LICENSE.txt
+MANIFEST.in
+README.rst
+requirements.txt
+setup.cfg
+setup.py
+SpheroidJ.egg-info/PKG-INFO
+SpheroidJ.egg-info/SOURCES.txt
+SpheroidJ.egg-info/dependency_links.txt
+SpheroidJ.egg-info/entry_points.txt
+SpheroidJ.egg-info/requires.txt
+SpheroidJ.egg-info/top_level.txt
+spheroids/__init__.py
+spheroids/command_line.py
+spheroids/spheroids.py

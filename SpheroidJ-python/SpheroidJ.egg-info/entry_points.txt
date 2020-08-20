@@ -1,0 +1,4 @@
+[console_scripts]
+spheroids = spheroids.command_line:main
+spheroids-folder = spheroids.command_line:main_folder
+

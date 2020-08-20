@@ -1,0 +1,8 @@
+nd2reader==3.2.3
+imutils
+scikit-image==0.17.2
+tqdm
+read-roi==1.6.0
+numpy==1.18.5
+opencv-python
+torchvision==0.7.0
