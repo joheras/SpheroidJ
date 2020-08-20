@@ -432,7 +432,8 @@ public class DetectEsferoidMethods {
 
 			DetectEsferoidImageMethods.processEsferoidDeep(dir,name);
 			ImagePlus imp2 = IJ.getImage();
-			rm = AnalyseParticleMethods.analyseParticlesTeodora(imp2, false, false);
+			ImagePlus imp=imp2.duplicate();
+			rm = AnalyseParticleMethods.analyseParticlesTeodora(imp, false, false);
 
 			try {
 				Utils.showResultsAndSave(dir, name, imp2, rm, goodRows);

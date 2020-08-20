@@ -1,7 +1,9 @@
 package esferoides;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 import com.mchange.v1.lang.GentleThread;
 
@@ -20,15 +22,42 @@ public class DetectEsferoidImageMethods {
 
 		try {
 			Process p;
-			p = Runtime.getRuntime().exec("spheroids " + name + " " + dir);
-			p.waitFor();
-			File f = new File(name);
-			String predictionPath = f.getName() + "_pred";
+			ProcessBuilder processBuilder = new ProcessBuilder();
+			processBuilder.command("bash", "-c", "spheroids " + name + " " + dir);
+
+			Process process = processBuilder.start();
+
+			StringBuilder output = new StringBuilder();
+
+			BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+
+			String line;
+			while ((line = reader.readLine()) != null) {
+				output.append(line + "\n");
+			}
+
+			int exitVal = process.waitFor();
+			if (exitVal == 0) {
+				System.out.println("Success!");
+				System.out.println(output);
+				//System.exit(0);
+			} else {
+				System.out.println("Error");
+				System.out.println(exitVal);
+			}
+			
+
+			String predictionPath = name.substring(0, name.lastIndexOf('.'))+"_pred";
+			System.out.println(predictionPath);
 			ImagePlus imp2 = IJ.openImage(predictionPath);
+			imp2.show();
 			IJ.run(imp2, "8-bit", "");
 			IJ.setAutoThreshold(imp2, "Default");
 			IJ.run(imp2, "Convert to Mask", "");
-		} catch (IOException e) {
+			imp2.changes=false;
+		} catch (
+
+		IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InterruptedException e) {
