@@ -10,5 +10,4 @@ def main():
 def main_folder():
     arg1 = sys.argv[1]
     arg2 = sys.argv[2]
-    arg3 = sys.argv[3]
-    spheroids.predictFolder(arg1,arg2,arg3)
+    spheroids.predictFolder(arg1,arg2)

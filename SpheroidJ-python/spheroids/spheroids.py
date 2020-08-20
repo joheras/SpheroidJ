@@ -223,7 +223,7 @@ def predictImage(imagePath,outputPath):
     get_prediction_several_models(imagePath,outputPath, [modelName])
 
 
-def predictFolder(inputPath,outputPath,extension='.nd2'):
+def predictFolder(inputPath,outputPath,extension=('.jpg','.nd2','.tif','.tiff'):
     os.makedirs(outputPath,exist_ok=True)
     images = list_files(inputPath,validExts=extension)
     for imagePath in tqdm(images):
