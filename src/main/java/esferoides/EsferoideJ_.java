@@ -31,10 +31,12 @@ import net.imagej.ImageJ;
 public class EsferoideJ_ implements Command {
 
 	@Parameter(label = "Select type of images", choices = {"Threhold", "Edges", "Threshold plus edges", 
-			"Threshold and edges", "Fluorescence"  })
+			"Threshold and edges", "Fluorescence","HRNSeg"  })
 	//"suspension", "colageno", "Hector no fluo v1",
 	//"Hector no fluo v2", "Teodora v1", "Teodora Big", "Hector fluo stack", "Teniposide"
-	private String type = "Threshold";
+	//@Parameter(label = "Select type of images", choices = {"suspension", "colageno", "Hector no fluo v1",
+	//		"Hector no fluo v2", "Teodora v1", "Teodora Big", "Hector fluo stack", "Teniposide" })
+	private String type = "Hector fluo stack";
 
 	@Parameter(label = "Fix the scale")
 	private boolean setScale = false;

@@ -57,6 +57,12 @@ public class EsferoidProcessorFactory {
 					DetectEsferoidMethods::detectEsferoideTeniposide);
 			break;
 		}
+		
+		case "HRNSeg": {
+			esferoidProcessor = new EsferoidProcessor(SearchFilesMethods::searchFiles,
+					DetectEsferoidMethods::detectEsferoideDeep);
+			break;
+		}
 
 		}
 

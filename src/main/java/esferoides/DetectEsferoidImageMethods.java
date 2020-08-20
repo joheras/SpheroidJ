@@ -1,5 +1,10 @@
 package esferoides;
 
+import java.io.File;
+import java.io.IOException;
+
+import com.mchange.v1.lang.GentleThread;
+
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
@@ -10,6 +15,27 @@ import ij.plugin.frame.RoiManager;
 import ij.process.ImageStatistics;
 
 public class DetectEsferoidImageMethods {
+
+	public static void processEsferoidDeep(String dir, String name) {
+
+		try {
+			Process p;
+			p = Runtime.getRuntime().exec("spheroids " + name + " " + dir);
+			p.waitFor();
+			File f = new File(name);
+			String predictionPath = f.getName() + "_pred";
+			ImagePlus imp2 = IJ.openImage(predictionPath);
+			IJ.run(imp2, "8-bit", "");
+			IJ.setAutoThreshold(imp2, "Default");
+			IJ.run(imp2, "Convert to Mask", "");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	public static void processEsferoidNoFluo(ImagePlus imp2) {
 		IJ.run(imp2, "8-bit", "");
@@ -36,8 +62,11 @@ public class DetectEsferoidImageMethods {
 
 	public static void processEsferoidFluo(ImagePlus imp2, boolean threshold) {
 		IJ.run(imp2, "8-bit", "");
-		IJ.setAutoThreshold(imp2, "Otsu dark");//Li
+		IJ.setAutoThreshold(imp2, "RenyiEntropy dark");// Li, MaxEntropy
+
 		IJ.run(imp2, "Convert to Mask", "");
+		IJ.run(imp2, "Erode", "");
+
 	}
 
 	public static void processEsferoidUsingThreshold(ImagePlus imp2, boolean dilate) {
@@ -290,7 +319,6 @@ public class DetectEsferoidImageMethods {
 
 	public static void processEsferoidBig(ImagePlus imp2) {
 
-		
 		ImagePlus imp1 = imp2.duplicate();
 		imp1.show();
 		IJ.setAutoThreshold(imp1, "Default");

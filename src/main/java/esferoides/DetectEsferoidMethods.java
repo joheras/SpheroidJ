@@ -317,11 +317,14 @@ public class DetectEsferoidMethods {
 			DetectEsferoidImageMethods.processEsferoidFluo(impFluoD, true);
 			RoiManager rm = AnalyseParticleMethods.analyzeParticlesHector(impFluoD);
 			Utils.keepBiggestROI(rm);
-			Roi r = rm.getRoi(0);
+			
+			/*Roi r = rm.getRoi(0);
 			ImageStatistics stats = r.getStatistics();
 			impFluoD.close();
+			
 
 			if (stats.area > 10000) {
+				System.out.println("Entra aquí");
 				rm.runCommand("Select All");
 				rm.runCommand("Delete");
 
@@ -356,7 +359,7 @@ public class DetectEsferoidMethods {
 
 				}
 
-			}
+			}*/
 
 			Utils.showResultsAndSave(dir, name, imp, rm, goodRows);
 			imp.close();
@@ -417,5 +420,30 @@ public class DetectEsferoidMethods {
 		}
 
 	}
+	
+	
+	// Method to detect esferoides.
+		public static void detectEsferoideDeep(ImporterOptions options, String dir, String name,
+				ArrayList<Integer> goodRows) {
+			options.setId(name);
+
+			
+			RoiManager rm;
+
+			DetectEsferoidImageMethods.processEsferoidDeep(dir,name);
+			ImagePlus imp2 = IJ.getImage();
+			rm = AnalyseParticleMethods.analyseParticlesTeodora(imp2, false, false);
+
+			try {
+				Utils.showResultsAndSave(dir, name, imp2, rm, goodRows);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			imp2.close();
+
+		}
+	
+	
 
 }
