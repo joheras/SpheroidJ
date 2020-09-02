@@ -1,4 +1,4 @@
-package esferoides;
+package spheroidj;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;

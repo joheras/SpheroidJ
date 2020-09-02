@@ -1,1 +1,0 @@
-{"class":"esferoides.Experiment","values":{"headless":true,"menuPath":"Plugins>EsferoideJ>Experiment","type":"org.scijava.command.Command"}}{"class":"esferoides.EsferoideJ_","values":{"headless":true,"menuPath":"Plugins>EsferoideJ>Batch","type":"org.scijava.command.Command"}}

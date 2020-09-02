@@ -13,7 +13,6 @@ import org.scijava.command.Command;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 
-import esferoides.Utils;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.Prefs;
@@ -28,6 +27,7 @@ import loci.formats.FormatException;
 import loci.plugins.BF;
 import loci.plugins.in.ImporterOptions;
 import net.imagej.ImageJ;
+import spheroidj.Utils;
 
 //@Plugin(type = Command.class, headless = true, menuPath = "Plugins>Esferoids>EsferoideHistogramMosaicJ")
 public class EsferoideHistogramMosaicJ_ implements Command {

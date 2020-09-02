@@ -1,4 +1,4 @@
-package esferoides;
+package spheroidj;
 
 import java.awt.Polygon;
 import java.io.File;

@@ -1,4 +1,4 @@
-package esferoides;
+package spheroidj;
 
 class Estatico {
 	public static int cont = 2;
