@@ -29,7 +29,7 @@ public class DetectSpheroidImageMethods {
 				pBuilder = new ProcessBuilder("cmd.exe", "/c", "deep-tumour-spheroid.exe image \"" + name + "\" \"" + dir.replace("\\", "\\\\") + "\"");
 			} else {
 				System.out.println("Linux ");
-				pBuilder = new ProcessBuilder("bash", "-ic", "deep-tumour-spheroid image '" + name + "' '" + dir + "'");
+				pBuilder = new ProcessBuilder("bash", "-c", "deep-tumour-spheroid image '" + name + "' '" + dir + "'");
 			}
 
 			Process process = pBuilder.start();
@@ -64,12 +64,7 @@ public class DetectSpheroidImageMethods {
 			// IJ.run('Options...', 'black');
 			IJ.run(imp2, "Convert to Mask", "");
 			IJ.run(imp2, "Create Selection", "");
-			RoiManager roiManager = new RoiManager();
-			roiManager.addRoi(imp2.getRoi());
-			roiManager.runCommand("Save", predictionPath.replace("_pred.png", ".roi"));
-			roiManager.close();
-
-			imp2.close();
+			imp2.changes=false;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

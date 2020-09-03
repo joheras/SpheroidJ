@@ -425,8 +425,20 @@ public class DetectSpheroidMethods {
 	// Method to detect esferoides.
 		public static void detectSpheroidDeep(ImporterOptions options, String dir, String name,
 				ArrayList<Integer> goodRows) {
+			RoiManager rm;
 
 			DetectSpheroidImageMethods.processSpheroidDeep(dir,name);
+			ImagePlus imp2 = IJ.getImage();
+			ImagePlus imp=imp2.duplicate();
+			rm = AnalyseParticleMethods.analyseParticlesTeodora(imp, false, false);
+
+			try {
+				Utils.showResultsAndSave(dir, name, imp2, rm, goodRows);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			imp2.close();
 
 		}
 	
