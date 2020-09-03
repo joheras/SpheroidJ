@@ -30,7 +30,7 @@ import net.imagej.ImageJ;
 @Plugin(type = Command.class, headless = true, menuPath = "Plugins>SpheroidJ>Batch")
 public class SpheroidJ implements Command {
 
-	@Parameter(label = "Select type of images", choices = {"Threhold", "Edges", "Threshold plus edges", 
+	@Parameter(label = "Select type of images", choices = {"Threshold", "Edges", "Threshold plus edges", 
 			"Threshold and edges", "Fluorescence","HRNSeg"  })
 	//"suspension", "colageno", "Hector no fluo v1",
 	//"Hector no fluo v2", "Teodora v1", "Teodora Big", "Hector fluo stack", "Teniposide"
