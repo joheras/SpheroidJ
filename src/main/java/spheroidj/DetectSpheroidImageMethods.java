@@ -29,7 +29,7 @@ public class DetectSpheroidImageMethods {
 				pBuilder = new ProcessBuilder("cmd.exe", "/c", "deep-tumour-spheroid.exe image \"" + name + "\" \"" + dir.replace("\\", "\\\\") + "\"");
 			} else {
 				System.out.println("Linux ");
-				pBuilder = new ProcessBuilder("bash", "-c", "deep-tumour-spheroid image '" + name + "' '" + dir + "'");
+				pBuilder = new ProcessBuilder("bash", "-ic", "deep-tumour-spheroid image '" + name + "' '" + dir + "'");
 			}
 
 			Process process = pBuilder.start();
