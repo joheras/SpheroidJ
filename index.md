@@ -2,34 +2,7 @@
 
 SpheroidJ is an open-source set of tools for spheroid segmentation.
 
-### Markdown
-
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/joheras/SpheroidJ/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+SpheroidJ consists of:
+- [An ImageJ plugin for spheroid segmentation](https://github.com/joheras/SpheroidJ/).
+- [A standalone application for spheroid segmentation](https://github.com/Wioland/Esferoides-master/).
+- [A Python library for spheroid segmentation using deep learning](https://github.com/WaterKnight1998/Deep-Tumour-Spheroid). 
