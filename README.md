@@ -93,7 +93,7 @@ Due to the different nature of spheroid images, we have particularised our gener
 
 ## Deep learning methods
 
-We have also trained several deep learning models with a set of [notebooks]() and [two datasets of spheroid images](). The best model was constructed using the [HRNet-seg architecture](https://arxiv.org/pdf/1908.07919.pdf).
+We have also trained several deep learning models with a set of [notebooks](https://github.com/WaterKnight1998/Deep-Tumour-Spheroid/tree/develop/notebooks) and [two datasets of spheroid images](). The best model was constructed using the [HRNet-seg architecture](https://arxiv.org/pdf/1908.07919.pdf).
 
 ## Datasets and results
 
