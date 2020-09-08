@@ -31,7 +31,7 @@ import net.imagej.ImageJ;
 public class SpheroidJ implements Command {
 
 	@Parameter(label = "Select type of images", choices = {"Threshold", "Edges", "Threshold plus edges", 
-			"Threshold and edges", "Fluorescence","HRNSeg"  })
+			"Threshold and edges", "Fluorescence v1", "Fluorescence v2", "Fluorescence v3","HRNSeg"  })
 	//"suspension", "colageno", "Hector no fluo v1",
 	//"Hector no fluo v2", "Teodora v1", "Teodora Big", "Hector fluo stack", "Teniposide"
 	//@Parameter(label = "Select type of images", choices = {"suspension", "colageno", "Hector no fluo v1",

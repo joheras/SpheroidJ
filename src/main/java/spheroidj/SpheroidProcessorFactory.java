@@ -7,12 +7,12 @@ public class SpheroidProcessorFactory {
 		SpheroidProcessor spheroidProcessor = null;
 
 		switch (name) {
-		case "Fluorescence": {
+		case "Fluorescence v1": {
 			spheroidProcessor = new SpheroidProcessor(SearchFilesMethods::searchFilesFluo,
 					DetectSpheroidMethods::detectSpheroidFluoSuspension);
 			break;
 		}
-		case "colageno": {
+		case "Fluorescence v2": {
 			spheroidProcessor = new SpheroidProcessor(SearchFilesMethods::searchFilesFluo,
 					DetectSpheroidMethods::detectSpheroidFluoColageno);
 			break;
@@ -46,7 +46,7 @@ public class SpheroidProcessorFactory {
 			break;
 		}
 		
-		case "Hector fluo stack": {
+		case "Fluorescence v3": {
 			spheroidProcessor = new SpheroidProcessor(SearchFilesMethods::searchFilesTeodora,
 					DetectSpheroidMethods::detectSpheroidFluoStack);
 			break;
