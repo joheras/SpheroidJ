@@ -8,8 +8,7 @@ SpheroidJ is an [ImageJ](http://imagej.net/Welcome) plugin for spheroid segmenta
 2. [Segmentation method](#segmentation-method)
 3. [Deep learning method](#deep-learning-method)
 4. [Datasets and results](#datasets-and-results)
-5. [Video](#video)
-6. [Acknowledgments](#Acknowledgments)
+5. [Acknowledgments](#Acknowledgments)
 
 ## Installation
 
@@ -17,11 +16,17 @@ SpheroidJ is an [ImageJ](http://imagej.net/Welcome) plugin for spheroid segmenta
 
 In order to use the deep learning model, it is necessary to install the following Python package [Deep-Tumour-Spheroid](https://pypi.org/project/Deep-Tumour-Spheroid/). You need to use `pip`:
 
-For example, for installing it in Ubuntu use:
+For installing it in Ubuntu use:
 ```bash
 pip3 install Deep-Tumour-Spheroid
 ```
 
+For installing it in Windows, you need to manually install the Pytorch library:
+
+```bash
+pip install torch===1.6.0 torchvision===0.7.0 -f https://download.pytorch.org/whl/torch_stable.html
+pip install Deep-Tumour-Spheroid
+```
 All the code from this package is located in it is own repository [Deep-Tumour-Spheroid](https://github.com/WaterKnight1998/Deep-Tumour-Spheroid).
 
 Once this library is installed, it can be used through the ImageJ plugins, throught it is own gui or from the command line with the following two commands (the former is employed to segment the spheroid from a single image and the latter for a complete folder):
@@ -37,10 +42,10 @@ deep-tumour-spheroid gui
 ```
 
 You can find a bigger description in the package's repository [Deep-Tumour-Spheroid](https://github.com/WaterKnight1998/Deep-Tumour-Spheroid) or in the package website [Deep-Tumour-Spheroid](https://pypi.org/project/Deep-Tumour-Spheroid/).
-### ImageJ
+### ImageJ and Fiji
 
 #### Already built version
-Download the [latest released jar](https://github.com/joheras/SpheroidJ/releases) into the _plugins_ folder.
+Download the [latest released jar](https://github.com/joheras/SpheroidJ/releases/download/1.0.1/SpheroidJ-1.0.0.jar) into the _plugins_ folder.
 
 #### Build from source
 
@@ -52,14 +57,6 @@ mvn clean
 mvn package
 ```
 
-### Fiji
-
-You just need to add the SpheroidJ update site:
-
-1. Select _Help > Update..._ from the Fiji menu to start the updater.
-2. Click on _Manage update sites_. This brings up a dialog where you can activate additional update sites.
-3. Activate the IJPB-plugins update site and close the dialog. Now you should see an additional jar file for download.
-4. Click _Apply changes_ and restart Fiji.
 
 ### Graphical Interface
 
@@ -134,7 +131,6 @@ Mean (and standard deviation) for the fluorescence datasets. The best result for
 | FN2S  |  0.03(0.02)  |  0(0)  |  0.65(0.3)  |  0.47(0.36)  |  0.02(0.16)  |  0.05(0.04)  |  **0.82(0.17)** | 0.78(0.2)|  185.960*** | A5,D, A1>A2,A4,In,A3,Iv |
 | Combined  |  0.25(0.29)  |  0.03(0.15)  |  0.48(0.32)  |  0.19(0.32)  |  0.27(0.32)  |  0.03(0.10)  |  **0.82(0.16)** | 0.74(0.25)| 384.744*** | A5,D>A1>A3,In>A2,Iv |
 
-## Video
 
 ## Acknowledgments 
 
