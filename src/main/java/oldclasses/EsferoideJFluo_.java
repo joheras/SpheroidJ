@@ -18,8 +18,6 @@ import org.scijava.command.Command;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 
-import esferoides.ExportToExcel;
-import esferoides.Utils;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.Roi;
@@ -32,6 +30,8 @@ import ij.plugin.frame.RoiManager;
 import ij.process.ImageStatistics;
 import loci.formats.FormatException;
 import loci.plugins.in.ImporterOptions;
+import spheroidj.ExportToExcel;
+import spheroidj.Utils;
 
 //@Plugin(type = Command.class, headless = true, menuPath = "Plugins>EsferoideJFluo")
 public class EsferoideJFluo_ implements Command {

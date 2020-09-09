@@ -13,6 +13,9 @@ import ij.process.ImageStatistics;
 import loci.formats.FormatException;
 import loci.plugins.BF;
 import loci.plugins.in.ImporterOptions;
+import spheroidj.AnalyseParticleMethods;
+import spheroidj.ExportToExcel;
+import spheroidj.Utils;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -30,10 +33,6 @@ import javax.swing.border.Border;
 
 import org.scijava.command.Command;
 import org.scijava.plugin.Plugin;
-
-import esferoides.AnalyseParticleMethods;
-import esferoides.ExportToExcel;
-import esferoides.Utils;
 
 //@Plugin(type = Command.class, headless = true, menuPath = "Plugins>Esferoids>EsferoideJ")
 //@Plugin(type = Command.class, headless = true, menuPath = "Plugins>EsferoideJv2")

@@ -22,6 +22,9 @@ import net.imagej.Dataset;
 import net.imagej.ImageJ;
 import net.imagej.axis.Axes;
 import net.imagej.axis.AxisType;
+import spheroidj.AnalyseParticleMethods;
+import spheroidj.ExportToExcel;
+import spheroidj.Utils;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -44,10 +47,6 @@ import org.scijava.command.Command;
 import org.scijava.command.Previewable;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
-
-import esferoides.AnalyseParticleMethods;
-import esferoides.ExportToExcel;
-import esferoides.Utils;
 
 //@Plugin(type = Command.class, headless = true, menuPath = "Plugins>EsferoideJ")
 public class EsferoideJv1_ implements Command {

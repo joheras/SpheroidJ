@@ -1,4 +1,4 @@
-package esferoides;
+package spheroidj;
 
 import java.awt.BorderLayout;
 import java.awt.Container;

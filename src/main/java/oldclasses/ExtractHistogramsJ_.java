@@ -14,13 +14,13 @@ import org.scijava.command.Command;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 
-import esferoides.Utils;
 import ij.ImagePlus;
 import ij.io.DirectoryChooser;
 import ij.process.ImageProcessor;
 import loci.formats.FormatException;
 import loci.plugins.BF;
 import loci.plugins.in.ImporterOptions;
+import spheroidj.Utils;
 
 //@Plugin(type = Command.class, headless = true, menuPath = "Plugins>Esferoids>Extract Histograms")
 public class ExtractHistogramsJ_ implements Command {

@@ -4,8 +4,8 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.mycompany</groupId>
-	<artifactId>EsferoidesJ</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<artifactId>SpheroidJ</artifactId>
+	<version>1.0.0</version>
 	<packaging>jar</packaging>
 	<repositories>
 		<repository>
@@ -51,8 +51,40 @@
 		<!-- NB: Override argLine property for extra maven-surefire-plugin args. -->
 		<argLine />
 	</properties>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>3.2.4</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<minimizeJar>true</minimizeJar>
+							<artifactSet>
+                                <includes>
+                                   <include>io.github.joheras:IJ-OpenCV</include>
+                                   <include>com.github.ijpb:MorphoLibJ</include>
+                                   <include>ome:formats-api</include>
+                                   <include>ome:bio-formats</include>
+                                   <include>ome:loci_plugins</include>
+                                   <include>ch.qos.logback:logback-core</include>
+                                   <include>ch.qos.logback:logback-classic</include>
+                                   <include>org.apache.poi:poi</include>
+                                   <include>org.apache.poi:poi-ooxml</include>
+                                </includes>
+                            </artifactSet>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 	<dependencies>
-
 		<dependency>
 			<groupId>io.github.joheras</groupId>
 			<artifactId>IJ-OpenCV</artifactId>
@@ -92,7 +124,12 @@
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
-			<version>3.7</version>
+			<version>3.17</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>3.17</version>
 		</dependency>
 	</dependencies>
 </project>

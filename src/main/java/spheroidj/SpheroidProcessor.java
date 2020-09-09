@@ -1,26 +1,26 @@
-package esferoides;
+package spheroidj;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import loci.plugins.in.ImporterOptions;
 
-public class EsferoidProcessor {
+public class SpheroidProcessor {
 	
 	private searchFilesFunction searchFiles;
-	private detectEsferoidFunction detectEsferoid;
+	private detectSpheroidFunction detectEsferoid;
 	
-	public EsferoidProcessor(searchFilesFunction searchFiles, detectEsferoidFunction detectEsferoid) {
+	public SpheroidProcessor(searchFilesFunction searchFiles, detectSpheroidFunction detectSpheroid) {
 		super();
 		this.searchFiles = searchFiles;
-		this.detectEsferoid = detectEsferoid;
+		this.detectEsferoid = detectSpheroid;
 	}
 
 	public searchFilesFunction getSearchFiles() {
 		return searchFiles;
 	}
 
-	public detectEsferoidFunction getDetectEsferoid() {
+	public detectSpheroidFunction getDetectEsferoid() {
 		return detectEsferoid;
 	}
 
@@ -33,6 +33,6 @@ interface searchFilesFunction {
 }
 
 @FunctionalInterface
-interface detectEsferoidFunction {
+interface detectSpheroidFunction {
     public void apply(ImporterOptions options, String dir, String name,ArrayList<Integer> goodRows);
 }
