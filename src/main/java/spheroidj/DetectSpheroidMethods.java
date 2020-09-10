@@ -79,6 +79,8 @@ public class DetectSpheroidMethods {
 	public static void detectSpheroidHectorv2(ImporterOptions options, String dir, String name,
 			ArrayList<Integer> goodRows) {
 		options.setId(name);
+
+		options.setWindowless(true);
 		ImagePlus[] imps;
 		try {
 			ImagePlus impb = IJ.openImage(name);
@@ -114,7 +116,13 @@ public class DetectSpheroidMethods {
 
 		try {
 
-			ImagePlus impb = IJ.openImage(name);
+			options.setId(name);
+
+			options.setWindowless(true);
+			ImagePlus[] imps;
+			imps = BF.openImagePlus(options);
+
+			ImagePlus impb = imps[0];
 			String title = impb.getTitle();
 
 			ImagePlus imp = impb.duplicate();
@@ -175,6 +183,9 @@ public class DetectSpheroidMethods {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (FormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 	}
@@ -183,6 +194,8 @@ public class DetectSpheroidMethods {
 	public static void detectSpheroidTeodora(ImporterOptions options, String dir, String name,
 			ArrayList<Integer> goodRows) {
 		options.setId(name);
+
+		options.setWindowless(true);
 
 		ImagePlus[] imps;
 		try {
@@ -214,10 +227,11 @@ public class DetectSpheroidMethods {
 	// Method to detect esferoides.
 	public static void detectSpheroidTeodoraBig(ImporterOptions options, String dir, String name,
 			ArrayList<Integer> goodRows) {
-		options.setId(name);
-
-		ImagePlus[] imps;
+		
 		try {
+			options.setId(name);
+			options.setWindowless(true);
+			ImagePlus[] imps;
 			imps = BF.openImagePlus(options);
 
 			ImagePlus imp = imps[0];
@@ -264,7 +278,8 @@ public class DetectSpheroidMethods {
 			ArrayList<Integer> goodRows) {
 		options.setId(name);
 
-		ImagePlus[] imps;
+		options.setWindowless(true);
+
 		ImagePlus imp = IJ.openImage(name);
 		ImagePlus imp2 = imp.duplicate();
 
@@ -295,6 +310,8 @@ public class DetectSpheroidMethods {
 	public static void detectSpheroidFluoStack(ImporterOptions options, String dir, String name,
 			ArrayList<Integer> goodRows) {
 		options.setId(name);
+
+		options.setWindowless(true); 
 
 		ImagePlus[] imps;
 		try {
@@ -378,9 +395,16 @@ public class DetectSpheroidMethods {
 			ArrayList<Integer> goodRows) {
 
 		options.setId(name);
+
+		options.setWindowless(true);
 		// Cambiar.
 		try {
-			ImagePlus imp = IJ.openImage(name);
+			options.setId(name);
+
+			ImagePlus[] imps;
+			imps = BF.openImagePlus(options);
+
+			ImagePlus imp = imps[0];
 
 			ImagePlus impD = imp.duplicate();
 
@@ -415,6 +439,9 @@ public class DetectSpheroidMethods {
 			Utils.showResultsAndSave(dir, name, imp, rm, goodRows);
 			imp.close();
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (FormatException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

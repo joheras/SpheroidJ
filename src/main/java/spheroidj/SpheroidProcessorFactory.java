@@ -18,7 +18,7 @@ public class SpheroidProcessorFactory {
 			break;
 		}
 		case "Edges": {
-			spheroidProcessor = new SpheroidProcessor(SearchFilesMethods::searchFilesHectorNoFluo,//searchFilesHectorNoFluo
+			spheroidProcessor = new SpheroidProcessor(SearchFilesMethods::searchFiles,//searchFilesHectorNoFluo
 					DetectSpheroidMethods::detectSpheroidHectorv1);
 			break;
 		}
@@ -28,14 +28,14 @@ public class SpheroidProcessorFactory {
 			break;
 		}
 		case "Threshold plus edges": {
-			spheroidProcessor = new SpheroidProcessor(SearchFilesMethods::searchFilesTeodora,//searchFilesTeodora,
+			spheroidProcessor = new SpheroidProcessor(SearchFilesMethods::searchFiles,//searchFilesTeodora,
 					DetectSpheroidMethods::detectSpheroidTeodora);
 			break;
 		}
 		
 		
 		case "Threshold and edges": {
-			spheroidProcessor = new SpheroidProcessor(SearchFilesMethods::searchFilesTeodora,//searchFilesTeodora,
+			spheroidProcessor = new SpheroidProcessor(SearchFilesMethods::searchFiles,//searchFilesTeodora,
 					DetectSpheroidMethods::detectSpheroidTeodoraBig);
 			break;
 		}
@@ -53,7 +53,7 @@ public class SpheroidProcessorFactory {
 		}
 		
 		case "Threshold": {
-			spheroidProcessor = new SpheroidProcessor(SearchFilesMethods::searchFilesJPG,//searchFilesJPG,
+			spheroidProcessor = new SpheroidProcessor(SearchFilesMethods::searchFiles,//searchFilesJPG,
 					DetectSpheroidMethods::detectSpheroidTeniposide);
 			break;
 		}

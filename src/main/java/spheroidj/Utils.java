@@ -183,6 +183,9 @@ public class Utils {
 
 		ImageProcessor ip = imp1.getProcessor();
 		int[] histogram = ip.getHistogram();
+		if(histogram.length<threshold) {
+			threshold=histogram.length;
+		}
 
 		int countpixels = 0;
 		for (int i = 0; i < threshold; i++) {
@@ -216,7 +219,7 @@ public class Utils {
 			
 		}
 		
-		while(pos<threshold2) {
+		while(pos<threshold2 && i < histogram.length-1) {
 			if(histogram[i]<num) {
 				return true;
 			}
