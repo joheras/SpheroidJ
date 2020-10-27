@@ -29,7 +29,7 @@ public class DetectSpheroidImageMethods {
 				pBuilder = new ProcessBuilder("cmd.exe", "/c", "deep-tumour-spheroid.exe image \"" + name + "\" \"" + dir.replace("\\", "\\\\") + "\"");
 			} else {
 				System.out.println("Linux ");
-				pBuilder = new ProcessBuilder("bash", "-ic", "deep-tumour-spheroid image '" + name + "' '" + dir + "'");
+				pBuilder = new ProcessBuilder("bash", "-c", "deep-tumour-spheroid image '" + name + "' '" + dir + "'");
 			}
 
 			Process process = pBuilder.start();
@@ -370,6 +370,10 @@ public class DetectSpheroidImageMethods {
 
 		ImagePlus imp1 = imp2.duplicate();
 		imp1.show();
+		if(imp1.getBitDepth()==16 || imp1.getBitDepth()!=8) {
+			IJ.run(imp2, "8-bit", "");
+			IJ.run(imp1, "8-bit", "");
+		}
 		IJ.setAutoThreshold(imp1, "Default");
 		IJ.run(imp1, "Convert to Mask", "");
 		IJ.run(imp2, "Find Edges", "");

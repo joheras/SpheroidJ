@@ -36,9 +36,6 @@ public class Utils {
 
 		}
 	}
-	
-	
-	
 
 	// Method to draw the results stored in the roi manager into the image, and then
 	// save the
@@ -50,11 +47,12 @@ public class Utils {
 	// image in a given directory. Since we know that there is only one esferoide
 	// per image, we
 	// only keep the ROI with the biggest area stored in the ROI Manager.
-	public static void showResultsAndSave(String dir, String name, ImagePlus imp1, RoiManager rm,ArrayList<Integer> goodRows) throws IOException {
-	
+	public static void showResultsAndSave(String dir, String name, ImagePlus imp1, RoiManager rm,
+			ArrayList<Integer> goodRows) throws IOException {
+
 		IJ.run(imp1, "RGB Color", "");
 
-		//String name = imp1.getTitle();
+		// String name = imp1.getTitle();
 
 		// FileInfo f = imp1.getFileInfo();
 		name = name.substring(0, name.lastIndexOf("."));
@@ -155,36 +153,45 @@ public class Utils {
 	// rest of ROIs are
 	// deleted.
 	protected static void keepBiggestROI(RoiManager rm) {
-		if(rm!=null) {
-		Roi[] rois = rm.getRoisAsArray();
+		if (rm != null) {
+			Roi[] rois = rm.getRoisAsArray();
 
-		if (rois.length >= 1) {
-			rm.runCommand("Select All");
-			rm.runCommand("Delete");
+			if (rois.length >= 1) {
+				rm.runCommand("Select All");
+				rm.runCommand("Delete");
 
-			Roi biggestROI = rois[0];
+				Roi biggestROI = rois[0];
 
-			for (int i = 1; i < rois.length; i++) {
+				for (int i = 1; i < rois.length; i++) {
 
-				if (getArea(biggestROI.getPolygon()) < getArea(rois[i].getPolygon())) {
+					if (getArea(biggestROI.getPolygon()) < getArea(rois[i].getPolygon())) {
 
-					biggestROI = rois[i];
+						biggestROI = rois[i];
+					}
+
 				}
+//					IJ.showMessage(""+getArea(biggestROI.getPolygon()));
+				rm.addRoi(biggestROI);
 
 			}
-//					IJ.showMessage(""+getArea(biggestROI.getPolygon()));
-			rm.addRoi(biggestROI);
 
 		}
+	}
 
-	}}
-	
-	public static  int countBelowThreshold(ImagePlus imp1, int threshold) {
+	public static double mean(int[] m) {
+		double sum = 0;
+		for (int i = 0; i < m.length; i++) {
+			sum += m[i];
+		}
+		return sum / m.length;
+	}
+
+	public static int countBelowThreshold(ImagePlus imp1, int threshold) {
 
 		ImageProcessor ip = imp1.getProcessor();
 		int[] histogram = ip.getHistogram();
-		if(histogram.length<threshold) {
-			threshold=histogram.length;
+		if (histogram.length < threshold) {
+			threshold = histogram.length;
 		}
 
 		int countpixels = 0;
@@ -195,9 +202,8 @@ public class Utils {
 		return countpixels;
 
 	}
-	
-	
-	public static boolean countBetweenThresholdOver(ImagePlus imp1, int threshold1,int threshold2, int num) {
+
+	public static boolean countBetweenThresholdOver(ImagePlus imp1, int threshold1, int threshold2, int num) {
 
 		ImageProcessor ip = imp1.getProcessor();
 		int[] histogram = ip.getHistogram(256);
@@ -206,28 +212,25 @@ public class Utils {
 //		System.out.println(min);
 		double max = is.max;
 //		System.out.println(max);
-		double range = (max-min)/256;
-		
-		
-		
-		
+		double range = (max - min) / 256;
+
 		int i = 0;
 		double pos = min;
-		while(pos<threshold1) {
+		while (pos < threshold1) {
 			pos = pos + range;
 			i++;
-			
+
 		}
-		
-		while(pos<threshold2 && i < histogram.length-1) {
-			if(histogram[i]<num) {
+
+		while (pos < threshold2 && i < histogram.length - 1) {
+			if (histogram[i] < num) {
 				return true;
 			}
 			i++;
 			pos = pos + range;
 			System.out.println(pos);
 		}
-		
+
 		return false;
 
 	}

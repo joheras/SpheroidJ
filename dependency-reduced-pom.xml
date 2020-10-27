@@ -16,6 +16,7 @@
               <goal>shade</goal>
             </goals>
             <configuration>
+              <minimizeJar>true</minimizeJar>
               <artifactSet>
                 <includes>
                   <include>io.github.joheras:IJ-OpenCV</include>
@@ -64,7 +65,7 @@
     </repository>
   </repositories>
   <properties>
-    <bioformats.version>6.5.1</bioformats.version>
+    <bioformats.version>6.0.1</bioformats.version>
     <maven.compiler.target>1.8</maven.compiler.target>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.build.timestamp.format>d MMMMM yyyy</maven.build.timestamp.format>

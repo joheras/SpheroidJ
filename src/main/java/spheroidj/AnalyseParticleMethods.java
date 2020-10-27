@@ -40,10 +40,10 @@ public class AnalyseParticleMethods {
 		} else {
 			if (exclude) {
 				IJ.run(imp2, "Analyze Particles...",
-						"size=20000-Infinity circularity=0.15-1.00 show=Outlines exclude add");
+						"size=5000-Infinity circularity=0.15-1.00 show=Outlines exclude add");
 			}else {
 				IJ.run(imp2, "Analyze Particles...",
-						"size=20000-Infinity circularity=0.00-1.00 show=Outlines add");
+						"size=5000-Infinity circularity=0.00-1.00 show=Outlines add");
 			}
 		}
 
