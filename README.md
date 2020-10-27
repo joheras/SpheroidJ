@@ -131,6 +131,8 @@ Mean (and standard deviation) for the fluorescence datasets. The best result for
 | FN2S  |  0.03(0.02)  |  0(0)  |  0.65(0.3)  |  0.47(0.36)  |  0.02(0.16)  |  0.05(0.04)  |  **0.82(0.17)** | 0.78(0.2)|  185.960*** | A5,D, A1>A2,A4,In,A3,Iv |
 | Combined  |  0.25(0.29)  |  0.03(0.15)  |  0.48(0.32)  |  0.19(0.32)  |  0.27(0.32)  |  0.03(0.10)  |  **0.82(0.16)** | 0.74(0.25)| 384.744*** | A5,D>A1>A3,In>A2,Iv |
 
+### Results other methods
+We have tried other segmentation methods using [K-means and Canny edge detection](notebooks/KMeans-Canny-Segmentation.ipynb); however, those methods produce worse results than those obtained using the previous methods. 
 
 ## Acknowledgments 
 
