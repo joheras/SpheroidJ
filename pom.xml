@@ -39,7 +39,7 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<bioformats.version>6.0.1</bioformats.version>
-		<logback.version>1.1.1</logback.version>
+		<logback.version>1.2.0</logback.version>
 
 		<!-- NB: Avoid platform encoding warning when copying resources. -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
